@@ -8,6 +8,11 @@
 
   networking.hostName = "laptop";
 
+  # UEFI bootloader configuration (systemd-boot)
+  boot.loader.systemd-boot.enable = true;
+  # Allow writing EFI variables (required to install the loader)
+  boot.loader.efi.canTouchEfiVariables = true;
+
   # Host-specific tweaks
   powerManagement.powertop.enable = true; # example: laptop power savings
   services.tlp.enable = true;
