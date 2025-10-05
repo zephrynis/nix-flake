@@ -27,8 +27,8 @@ let
     src = fetchFromGitHub {
       owner = "zen-browser";
       repo = "desktop";
-      tag = zenVersion;
-      hash = "sha256-6CovYcJBbR9QtcNqZEC4tmukWTqra1b4VepmO21TwhM=";
+      rev = zenVersion;
+      sha256 = "sha256-6CovYcJBbR9QtcNqZEC4tmukWTqra1b4VepmO21TwhM=";
       fetchSubmodules = true;
     };
 
