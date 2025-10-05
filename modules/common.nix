@@ -54,6 +54,8 @@
   # Allow proprietary software if needed
   nixpkgs.config = {
     allowUnfree = true;
+    # Permit evaluation of packages marked broken (zen-browser currently sets broken = true)
+    allowBroken = true;
   };
 
   # Set the minimal stateVersion. When you upgrade, bump per host.
