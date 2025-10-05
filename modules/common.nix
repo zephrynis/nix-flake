@@ -46,7 +46,7 @@
   users.defaultUserShell = pkgs.bashInteractive; # change to zsh if preferred
 
   environment.systemPackages = with pkgs; [
-    alakritty
+    alacritty
     # Custom Zen Browser package (defined in ../packages/zen-browser.nix)
     (pkgs.callPackage ../packages/zen-browser.nix { inherit (pkgs) buildMozillaMach buildNpmPackage fetchFromGitHub lib fetchurl git pkg-config python3 vips runtimeShell writeScriptBin; })
   ];
