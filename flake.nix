@@ -2,10 +2,10 @@
   description = "Nix flake for PC and laptop with shared modules and Home Manager";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05"; # You can bump to a newer release later (e.g., nixos-24.11)
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05"; # You can bump to a newer release later (e.g., nixos-24.11)
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
