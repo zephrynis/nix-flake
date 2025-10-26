@@ -1,0 +1,13 @@
+# Nix build results
+result
+result-*
+
+# Temporary files
+*~
+*.swp
+*.swo
+.DS_Store
+
+# Hardware configuration (may contain sensitive info)
+# Uncomment if you don't want to commit hardware configs
+# hosts/*/hardware-configuration.nix
