@@ -23,6 +23,15 @@
   services.xserver = {
     enable = true;
   };
+  
+  # Exclude unwanted packages from Plasma
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    konsole
+    elisa
+  ];
+  
+  # Exclude xterm
+  services.xserver.excludePackages = [ pkgs.xterm ];
 
   # Optional: Enable Wayland compositor
   # programs.hyprland = {
