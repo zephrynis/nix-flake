@@ -90,6 +90,7 @@
     shellAliases = {
       ll = "ls -la";
       update = "sudo nixos-rebuild switch --flake .#my-machine";
+      update-laptop = "cd /home/zeph/nix-flake && git reset --hard origin/main && git pull && nix flake update && sudo nixos-rebuild switch --flake .#laptop";
     };
   };
 
