@@ -17,7 +17,7 @@
     # chromium
     
     # Terminal emulators
-    # alacritty
+    alacritty
     # kitty
     # wezterm
     
@@ -59,8 +59,8 @@
   # Git configuration
   programs.git = {
     enable = true;
-    userName = "Your Name";
-    userEmail = "your.email@example.com";
+    userName = "Zephrynis";
+    userEmail = "zephrynis.yt@gmail.com";
   };
 
   # Terminal configuration
@@ -72,7 +72,8 @@
     
     shellAliases = {
       ll = "ls -la";
-      update = "sudo nixos-rebuild switch --flake .#my-machine";
+      # update = "sudo nixos-rebuild switch --flake .#my-machine";
+      update-laptop = "cd /home/zephrynis/nix-flake && git pull && sudo nixos-rebuild switch --flake .#laptop";
       # Add more aliases
     };
     
@@ -99,6 +100,40 @@
   #     add_newline = false;
   #   };
   # };
+
+  # Alacritty terminal emulator
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      window = {
+        opacity = 0.9;
+        padding = {
+          x = 10;
+          y = 10;
+        };
+      };
+      
+      font = {
+        normal = {
+          family = "FiraCode Nerd Font";
+          style = "Regular";
+        };
+        size = 11.0;
+      };
+      
+      colors = {
+        primary = {
+          background = "#1e1e2e";
+          foreground = "#cdd6f4";
+        };
+      };
+      
+      # Uncomment and customize as needed
+      # cursor = {
+      #   style = "Block";
+      # };
+    };
+  };
 
   # GTK theming
   gtk = {
