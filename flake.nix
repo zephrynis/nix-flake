@@ -41,8 +41,8 @@
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = { inherit inputs; };
             
-            # Replace "yourusername" with your actual username
-            home-manager.users.yourusername = import ./home/home.nix;
+            # User configuration
+            home-manager.users.zeph = import ./home/home.nix;
           }
         ];
       };
@@ -68,8 +68,8 @@
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = { inherit inputs; };
             
-            # Replace "yourusername" with your actual username
-            home-manager.users.yourusername = import ./home/home.nix;
+            # User configuration
+            home-manager.users.zeph = import ./home/home.nix;
           }
         ];
       };

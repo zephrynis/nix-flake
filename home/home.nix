@@ -3,8 +3,8 @@
 {
   # Home Manager configuration for user-level dotfiles and applications
   
-  home.username = "yourusername"; # Change this
-  home.homeDirectory = "/home/yourusername"; # Change this
+  home.username = "zeph";
+  home.homeDirectory = "/home/zeph";
 
   # Packages to install for this user
   home.packages = with pkgs; [
