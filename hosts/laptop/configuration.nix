@@ -3,12 +3,12 @@
 {
   # Laptop specific configuration
   
-  networking.hostName = "laptop";
+  networking.hostName = "zeph-laptop";
 
   # Users configuration
-  users.users.yourusername = { # Change "yourusername" to your actual username
+  users.users.zeph = {
     isNormalUser = true;
-    description = "Your Name"; # Change this
+    description = "Zephrynis";
     extraGroups = [ "networkmanager" "wheel" "video" "audio" ];
     shell = pkgs.zsh; # or pkgs.bash
   };
@@ -17,19 +17,11 @@
   programs.zsh.enable = true;
 
   # Display manager and desktop environment / window manager
+  services.displayManager.sddm.enable = true;
+  services.desktopManager.plasma6.enable = true;
+  
   services.xserver = {
     enable = true;
-    
-    # Display manager
-    displayManager.gdm.enable = true;
-    
-    # Desktop environment (choose one, or comment all for a standalone WM)
-    # desktopManager.gnome.enable = true;
-    # desktopManager.plasma5.enable = true;
-    
-    # Window manager (uncomment if you want a standalone WM)
-    # windowManager.i3.enable = true;
-    # windowManager.bspwm.enable = true;
   };
 
   # Optional: Enable Wayland compositor
@@ -39,6 +31,11 @@
   # };
 
   # Laptop-specific power management
+  # Choose either TLP or power-profiles-daemon (not both)
+  # TLP is more advanced, power-profiles-daemon is simpler and integrates better with KDE
+  
+  # Option 1: Use TLP (more features)
+  services.power-profiles-daemon.enable = false;  # Disable to use TLP
   services.tlp = {
     enable = true;
     settings = {
@@ -51,6 +48,10 @@
       CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
     };
   };
+  
+  # Option 2: Use power-profiles-daemon (uncomment to use instead of TLP)
+  # services.tlp.enable = false;
+  # services.power-profiles-daemon.enable = true;
 
   # Enable powertop for additional power savings
   powerManagement.powertop.enable = true;
