@@ -10,9 +10,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     
-    # Declarative Flatpak management
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
-    
     # Optional: Hyprland (if you want a tiling Wayland compositor)
     # hyprland.url = "github:hyprwm/Hyprland";
     
@@ -20,7 +17,7 @@
     # nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-flatpak, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
     # NixOS configuration for your hostname(s)
     nixosConfigurations = {
       # Desktop PC configuration
@@ -47,9 +44,6 @@
             
             # User configuration
             home-manager.users.zeph = import ./home/home.nix;
-            
-            # Declarative Flatpak
-            home-manager.sharedModules = [ nix-flatpak.homeManagerModules.nix-flatpak ];
           }
         ];
       };
@@ -78,9 +72,6 @@
             
             # User configuration
             home-manager.users.zeph = import ./home/home.nix;
-            
-            # Declarative Flatpak
-            home-manager.sharedModules = [ nix-flatpak.homeManagerModules.nix-flatpak ];
           }
         ];
       };

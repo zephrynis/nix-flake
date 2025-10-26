@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 
 {
+  imports = [
+    ./flatpak.nix
+  ];
+
   # Common system configuration shared across all machines
   
   # Bootloader
@@ -9,9 +13,6 @@
 
   # Networking
   networking.networkmanager.enable = true;
-
-  # Enable Flatpak
-  services.flatpak.enable = true;
 
   # Timezone and locale
   time.timeZone = "Europe/London";

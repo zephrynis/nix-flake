@@ -155,17 +155,7 @@
   #   platformTheme.name = "gtk";
   # };
 
-  # Declarative Flatpak packages
-  services.flatpak = {
-    packages = [
-      "io.github.zen_browser.zen"
-      # Add more Flatpak apps here
-    ];
-    update.auto = {
-      enable = true;
-      onCalendar = "weekly";
-    };
-  };
+  # Flatpaks are managed in system/flatpak.nix
 
   # Let Home Manager manage itself
   programs.home-manager.enable = true;
