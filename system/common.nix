@@ -10,6 +10,9 @@
   # Networking
   networking.networkmanager.enable = true;
 
+  # Enable Flatpak
+  services.flatpak.enable = true;
+
   # Timezone and locale
   time.timeZone = "Europe/London";
   i18n.defaultLocale = "en_US.UTF-8";
