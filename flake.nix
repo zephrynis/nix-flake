@@ -43,6 +43,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.backupFileExtension = "backup";
             
             # User configuration
             home-manager.users.zeph = import ./home/home.nix;
@@ -73,6 +74,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.backupFileExtension = "backup";
             
             # User configuration
             home-manager.users.zeph = import ./home/home.nix;
