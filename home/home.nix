@@ -26,7 +26,7 @@
     # wezterm
     
     # File managers
-    dolphin
+    kdePackages.dolphin
     # thunar
     # ranger
     # nnn
