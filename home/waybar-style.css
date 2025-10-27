@@ -34,7 +34,6 @@ window#waybar {
   background: rgba(137, 180, 250, 0.3);
   color: #89b4fa;
   box-shadow: 0 0 15px rgba(137, 180, 250, 0.4);
-  padding: 0px 15px;
 }
 
 #workspaces button:hover {
