@@ -7,7 +7,7 @@
 }
 
 window#waybar {
-  background: rgba(30, 30, 46, 0.85);
+  background: rgba(30, 30, 46, 0.45);
   color: #cdd6f4;
 }
 
@@ -22,11 +22,21 @@ window#waybar {
 
 #workspaces button {
   padding: 0px 10px;
-  margin: 4px 3px;
-  border-radius: 10px;
+  margin: 1px 3px;
+  /* border-radius: 10px; */
   color: #cdd6f4;
   background: transparent;
   transition: all 0.3s ease;
+}
+
+#workspaces button:nth-child(1) {
+    border-top-left-radius: 100%;
+    border-bottom-left-radius: 100%;
+}
+
+#workspaces button:nth-last-child(1) {
+    border-top-right-radius: 100%;
+    border-bottom-right-radius: 100%;
 }
 
 #workspaces button.active {
