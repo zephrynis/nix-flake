@@ -55,6 +55,7 @@
     
     # Wayland utilities
     wl-clipboard  # Clipboard for Wayland
+    hyprcursor  # Hyprland cursor theme support
     
     # Ricing essentials
     # hyprpaper  # Wallpaper daemon
@@ -63,6 +64,7 @@
     # pywal  # Color scheme generator
     
     # Themes and icons
+    bibata-cursors  # Bibata cursor theme
     # papirus-icon-theme
     # arc-theme
   ];
@@ -158,6 +160,11 @@
     #   name = "Papirus-Dark";
     #   package = pkgs.papirus-icon-theme;
     # };
+    cursorTheme = {
+      name = "Bibata-Modern-Ice";
+      package = pkgs.bibata-cursors;
+      size = 24;
+    };
   };
 
   # Qt theming
@@ -165,6 +172,15 @@
   #   enable = true;
   #   platformTheme.name = "gtk";
   # };
+  
+  # Cursor theme for Hyprland
+  home.pointerCursor = {
+    name = "Bibata-Modern-Ice";
+    package = pkgs.bibata-cursors;
+    size = 24;
+    gtk.enable = true;
+    x11.enable = true;
+  };
 
   # Flatpaks are managed in system/flatpak.nix
 
