@@ -13,7 +13,7 @@
     # neovim
     
     # Browsers
-    firefox
+    # firefox
     # chromium
     
     # Terminal emulators
@@ -33,6 +33,7 @@
     
     # Communication
     legcord
+    teams
     # discord
     # slack
     
