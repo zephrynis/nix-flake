@@ -33,7 +33,7 @@
     
     # Communication
     legcord
-    teams
+    teams-for-linux
     # discord
     # slack
     
