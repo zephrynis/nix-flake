@@ -51,6 +51,7 @@
     waybar  # Status bar
     dunst  # Notifications
     wofi  # App launcher
+    networkmanagerapplet  # WiFi manager applet for system tray
     # rofi-wayland  # Alternative launcher
     
     # Wayland utilities

@@ -21,6 +21,7 @@
         
         "waybar"
         "dunst"
+        "nm-applet --indicator"  # WiFi manager in system tray
       ];
       
       # Environment variables
@@ -113,7 +114,6 @@
         "$mod, M, exit,"
         "$mod, E, exec, dolphin"
         "$mod, V, togglefloating,"
-        "$mod, R, exec, wofi --show drun"
         "$mod, P, pseudo,"
         "$mod, J, togglesplit,"
         
@@ -154,6 +154,11 @@
         # Scroll through workspaces
         "$mod, mouse_down, workspace, e+1"
         "$mod, mouse_up, workspace, e-1"
+      ];
+      
+      # Release keybinds - Super key alone opens app launcher
+      bindr = [
+        "SUPER, SUPER_L, exec, pkill wofi || wofi --show drun"
       ];
       
       # Mouse bindings
