@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   # Laptop specific configuration
@@ -10,34 +10,29 @@
     isNormalUser = true;
     description = "Zephrynis";
     extraGroups = [ "networkmanager" "wheel" "video" "audio" ];
-    shell = pkgs.zsh; # or pkgs.bash
+    shell = pkgs.zsh;
   };
 
   # Enable zsh system-wide
   programs.zsh.enable = true;
 
-  # Display manager and desktop environment / window manager
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  # Hyprland - Tiling Wayland compositor
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  };
   
+  # Enable X11 for XWayland support
   services.xserver = {
     enable = true;
   };
   
-  # Exclude unwanted packages from Plasma
-  environment.plasma6.excludePackages = with pkgs.kdePackages; [
-    konsole
-    elisa
-  ];
-  
-  # Exclude xterm
-  services.xserver.excludePackages = [ pkgs.xterm ];
-
-  # Optional: Enable Wayland compositor
-  # programs.hyprland = {
-  #   enable = true;
-  #   xwayland.enable = true;
-  # };
+  # Use SDDM for login (works with Wayland)
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+  };
 
   # Laptop-specific power management
   # Choose either TLP or power-profiles-daemon (not both)

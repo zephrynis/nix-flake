@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 
 {
+  imports = [
+    ./hyprland.nix
+  ];
+
   # Home Manager configuration for user-level dotfiles and applications
   
   home.username = "zeph";
@@ -22,6 +26,7 @@
     # wezterm
     
     # File managers
+    dolphin
     # thunar
     # ranger
     # nnn
@@ -38,20 +43,24 @@
     # slack
     
     # Screenshots and screen recording
-    # flameshot
-    # maim
+    grim  # Screenshot tool for Wayland
+    slurp  # Screen area selector for Wayland
     # obs-studio
     
-    # System utilities
-    # rofi
-    # dunst
-    # polybar
-    # picom
+    # Hyprland essentials
+    waybar  # Status bar
+    dunst  # Notifications
+    wofi  # App launcher
+    # rofi-wayland  # Alternative launcher
+    
+    # Wayland utilities
+    wl-clipboard  # Clipboard for Wayland
     
     # Ricing essentials
+    # hyprpaper  # Wallpaper daemon
+    # swww  # Alternative animated wallpaper
     # lxappearance
-    # nitrogen  # wallpaper setter
-    # pywal     # color scheme generator
+    # pywal  # Color scheme generator
     
     # Themes and icons
     # papirus-icon-theme
