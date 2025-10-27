@@ -15,33 +15,26 @@ window#waybar {
 #workspaces {
   background: rgba(49, 50, 68, 0.7);
   margin: 5px 5px 5px 10px;
-  padding: 0px 5px;
+  padding: 2px 2px;
   border-radius: 15px;
   border: 2px solid rgba(137, 180, 250, 0.5);
 }
 
 #workspaces button {
-  padding: 0px 10px;
-  margin: 1px 3px;
+  /* padding: 0px 10px; */
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  margin: 1px 1px;
   color: #cdd6f4;
   background: transparent;
   transition: all 0.3s ease;
-}
-
-#workspaces button:nth-child(1) {
-    border-top-left-radius: 100%;
-    border-bottom-left-radius: 100%;
-}
-
-#workspaces button:nth-last-child(1) {
-    border-top-right-radius: 100%;
-    border-bottom-right-radius: 100%;
 }
 
 #workspaces button.active {
   background: rgba(137, 180, 250, 0.3);
   color: #89b4fa;
   box-shadow: 0 0 15px rgba(137, 180, 250, 0.4);
+  padding: 0px 15px;
 }
 
 #workspaces button:hover {
