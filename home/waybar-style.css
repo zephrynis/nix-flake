@@ -7,21 +7,17 @@
 }
 
 window#waybar {
-  background: rgba(30, 30, 46, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(30, 30, 46, 0.85);
   color: #cdd6f4;
 }
 
 /* Workspaces */
 #workspaces {
-  background: rgba(49, 50, 68, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(49, 50, 68, 0.7);
   margin: 5px 5px 5px 10px;
   padding: 0px 5px;
   border-radius: 15px;
-  border: 2px solid rgba(137, 180, 250, 0.3);
+  border: 2px solid rgba(137, 180, 250, 0.5);
 }
 
 #workspaces button {
@@ -47,25 +43,21 @@ window#waybar {
 
 /* Window title */
 #window {
-  background: rgba(49, 50, 68, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(49, 50, 68, 0.7);
   margin: 5px 10px;
   padding: 5px 15px;
   border-radius: 15px;
-  border: 2px solid rgba(137, 180, 250, 0.3);
+  border: 2px solid rgba(137, 180, 250, 0.5);
   color: #cdd6f4;
 }
 
 /* Clock */
 #clock {
-  background: rgba(49, 50, 68, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(49, 50, 68, 0.7);
   padding: 5px 20px;
   margin: 5px 10px;
   border-radius: 15px;
-  border: 2px solid rgba(137, 180, 250, 0.3);
+  border: 2px solid rgba(137, 180, 250, 0.5);
   color: #89b4fa;
   font-weight: bold;
 }
@@ -75,13 +67,11 @@ window#waybar {
 #network,
 #battery,
 #tray {
-  background: rgba(49, 50, 68, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(49, 50, 68, 0.7);
   padding: 5px 15px;
   margin: 5px 5px;
   border-radius: 15px;
-  border: 2px solid rgba(137, 180, 250, 0.3);
+  border: 2px solid rgba(137, 180, 250, 0.5);
 }
 
 #tray {
@@ -121,11 +111,9 @@ window#waybar {
 
 /* Tooltips */
 tooltip {
-  background: rgba(30, 30, 46, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(30, 30, 46, 0.95);
   border-radius: 10px;
-  border: 2px solid rgba(137, 180, 250, 0.3);
+  border: 2px solid rgba(137, 180, 250, 0.5);
   color: #cdd6f4;
 }
 
