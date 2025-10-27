@@ -32,6 +32,7 @@
     # spotify
     
     # Communication
+    legcord
     # discord
     # slack
     
