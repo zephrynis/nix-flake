@@ -22,7 +22,8 @@ window#waybar {
 
 #workspaces button {
   /* padding: 0px 10px; */
-  aspect-ratio: 1 / 1;
+  /* aspect-ratio: 1 / 1; */
+  min-width: 10px;
   border-radius: 10px;
   margin: 1px 1px;
   color: #cdd6f4;
