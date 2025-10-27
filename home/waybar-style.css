@@ -23,7 +23,6 @@ window#waybar {
 #workspaces button {
   padding: 0px 10px;
   margin: 1px 3px;
-  /* border-radius: 10px; */
   color: #cdd6f4;
   background: transparent;
   transition: all 0.3s ease;
@@ -42,13 +41,11 @@ window#waybar {
 #workspaces button.active {
   background: rgba(137, 180, 250, 0.3);
   color: #89b4fa;
-  border-radius: 10px;
   box-shadow: 0 0 15px rgba(137, 180, 250, 0.4);
 }
 
 #workspaces button:hover {
   background: rgba(137, 180, 250, 0.2);
-  border-radius: 10px;
 }
 
 /* Window title */
