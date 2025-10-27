@@ -13,9 +13,11 @@
       
       # Autostart applications
       exec-once = [
+        "swww-daemon"  # Start wallpaper daemon
+        # Set your wallpaper (place MP4/GIF in ~/nix-flake/assets/)
+        "swww img ~/nix-flake/assets/wallpaper.mp4"
         "waybar"
         "dunst"
-        # "hyprpaper"
       ];
       
       # Environment variables
