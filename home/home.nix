@@ -184,6 +184,15 @@
     gtk.enable = true;
     x11.enable = true;
   };
+  
+  # Waybar configuration with glassmorphic theme
+  programs.waybar = {
+    enable = true;
+    systemd.enable = true;
+  };
+  
+  home.file.".config/waybar/config".source = ./waybar-config.json;
+  home.file.".config/waybar/style.css".source = ./waybar-style.css;
 
   # Flatpaks are managed in system/flatpak.nix
 

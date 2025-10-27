@@ -1,0 +1,134 @@
+* {
+  border: none;
+  border-radius: 0;
+  font-family: "FiraCode Nerd Font", "JetBrainsMono Nerd Font";
+  font-size: 13px;
+  min-height: 0;
+}
+
+window#waybar {
+  background: rgba(30, 30, 46, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #cdd6f4;
+}
+
+/* Workspaces */
+#workspaces {
+  background: rgba(49, 50, 68, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  margin: 5px 5px 5px 10px;
+  padding: 0px 5px;
+  border-radius: 15px;
+  border: 2px solid rgba(137, 180, 250, 0.3);
+}
+
+#workspaces button {
+  padding: 0px 10px;
+  margin: 4px 3px;
+  border-radius: 10px;
+  color: #cdd6f4;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+#workspaces button.active {
+  background: rgba(137, 180, 250, 0.3);
+  color: #89b4fa;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(137, 180, 250, 0.4);
+}
+
+#workspaces button:hover {
+  background: rgba(137, 180, 250, 0.2);
+  border-radius: 10px;
+}
+
+/* Window title */
+#window {
+  background: rgba(49, 50, 68, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  margin: 5px 10px;
+  padding: 5px 15px;
+  border-radius: 15px;
+  border: 2px solid rgba(137, 180, 250, 0.3);
+  color: #cdd6f4;
+}
+
+/* Clock */
+#clock {
+  background: rgba(49, 50, 68, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 5px 20px;
+  margin: 5px 10px;
+  border-radius: 15px;
+  border: 2px solid rgba(137, 180, 250, 0.3);
+  color: #89b4fa;
+  font-weight: bold;
+}
+
+/* Right modules */
+#pulseaudio,
+#network,
+#battery,
+#tray {
+  background: rgba(49, 50, 68, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 5px 15px;
+  margin: 5px 5px;
+  border-radius: 15px;
+  border: 2px solid rgba(137, 180, 250, 0.3);
+}
+
+#tray {
+  margin-right: 10px;
+}
+
+#pulseaudio {
+  color: #89dceb;
+}
+
+#network {
+  color: #a6e3a1;
+}
+
+#battery {
+  color: #f9e2af;
+}
+
+#battery.charging {
+  color: #a6e3a1;
+}
+
+#battery.warning:not(.charging) {
+  color: #fab387;
+}
+
+#battery.critical:not(.charging) {
+  color: #f38ba8;
+  animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+  to {
+    opacity: 0.5;
+  }
+}
+
+/* Tooltips */
+tooltip {
+  background: rgba(30, 30, 46, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 10px;
+  border: 2px solid rgba(137, 180, 250, 0.3);
+  color: #cdd6f4;
+}
+
+tooltip label {
+  color: #cdd6f4;
+}
