@@ -28,6 +28,14 @@ window#waybar {
   transition: all 0.3s ease;
 }
 
+#workspaces button:nth-child(1) {
+  border-radius: 15px 0 0 15px;
+}
+
+#workspaces button:nth-last-child(1) {
+  border-radius: 0 15px 15px 0;
+}
+
 #workspaces button.active {
   background: rgba(137, 180, 250, 0.3);
   color: #89b4fa;
