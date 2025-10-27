@@ -16,15 +16,14 @@ window#waybar {
   background: rgba(49, 50, 68, 0.7);
   margin: 5px 5px 5px 10px;
   padding: 2px 2px;
-  border-radius: 15px;
+  border-radius: 100%;
   border: 2px solid rgba(137, 180, 250, 0.5);
 }
 
 #workspaces button {
-  /* padding: 0px 10px; */
-  /* aspect-ratio: 1 / 1; */
-  min-width: 10px;
-  border-radius: 10px;
+  width: 15px;
+  height: 15px;
+  border-radius: 100%;
   margin: 1px 1px;
   color: #cdd6f4;
   background: transparent;
