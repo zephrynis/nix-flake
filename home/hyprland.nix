@@ -13,9 +13,12 @@
       
       # Autostart applications
       exec-once = [
-        "swww-daemon"  # Start wallpaper daemon
-        # Set your wallpaper (place MP4/GIF in ~/nix-flake/assets/)
-        "swww img ~/nix-flake/assets/wallpaper.mp4"
+        # For GIF/WebP/static images - use swww:
+        # "swww-daemon && swww img ~/nix-flake/assets/wallpaper.gif"
+        
+        # For MP4 videos - use mpvpaper (replace 'eDP-1' with your monitor name from 'hyprctl monitors'):
+        "mpvpaper -o 'no-audio loop' eDP-1 ~/nix-flake/assets/wallpaper.mp4"
+        
         "waybar"
         "dunst"
       ];

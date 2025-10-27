@@ -56,7 +56,8 @@
     # Wayland utilities
     wl-clipboard  # Clipboard for Wayland
     hyprcursor  # Hyprland cursor theme support
-    swww  # Animated wallpaper daemon (supports MP4/GIF)
+    # swww  # Animated wallpaper daemon (supports GIF/WebP/etc)
+    mpvpaper  # Video wallpaper player (supports MP4)
     
     # Ricing essentials
     # hyprpaper  # Wallpaper daemon
