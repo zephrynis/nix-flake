@@ -13,11 +13,14 @@
     # Hyprland - Tiling Wayland compositor
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     
+    # Vicinae - Application launcher
+    vicinae.url = "github:vicinaehq/vicinae";
+    
     # Optional: Other useful inputs
     # nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs, home-manager, hyprland, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, hyprland, vicinae, ... }@inputs: {
     # NixOS configuration for your hostname(s)
     nixosConfigurations = {
       # Desktop PC configuration

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -12,6 +12,9 @@
 
   # Packages to install for this user
   home.packages = with pkgs; [
+    # Launcher
+    inputs.vicinae.packages.${pkgs.system}.default  # Vicinae launcher
+    
     # Development tools
     vscode
     # neovim

@@ -167,7 +167,7 @@
       
       # Release keybinds - Super key alone opens app launcher
       bindr = [
-        "SUPER, SUPER_L, exec, pkill wofi || wofi --show drun"
+        "SUPER, SUPER_L, exec, pkill vicinae || vicinae"
       ];
       
       # Mouse bindings
