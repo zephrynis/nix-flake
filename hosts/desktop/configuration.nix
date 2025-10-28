@@ -1,14 +1,14 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs,  ... }:
 
 {
   # Desktop PC specific configuration
   
-  networking.hostName = "desktop";
+  networking.hostName = "zeph-desktop";
 
   # Users configuration
-  users.users.yourusername = { # Change "yourusername" to your actual username
+  users.users.zeph = { # Change "yourusername" to your actual username
     isNormalUser = true;
-    description = "Your Name"; # Change this
+    description = "Zephrynis"; # Change this
     extraGroups = [ "networkmanager" "wheel" "video" "audio" ];
     shell = pkgs.zsh; # or pkgs.bash
   };
@@ -21,7 +21,7 @@
     enable = true;
     
     # Display manager
-    displayManager.gdm.enable = true;
+    #  displayManager.gdm.enable = true;
     
     # Desktop environment (choose one, or comment all for a standalone WM)
     # desktopManager.gnome.enable = true;
@@ -33,10 +33,16 @@
   };
 
   # Optional: Enable Wayland compositor
-  # programs.hyprland = {
-  #   enable = true;
-  #   xwayland.enable = true;
-  # };
+  programs.hyprland = { 
+    enable = true;
+    xwayland.enable = true;
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  };
+  
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+  };
 
   # Desktop-specific packages (gaming, streaming, etc.)
   environment.systemPackages = with pkgs; [
