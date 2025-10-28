@@ -31,6 +31,15 @@
         "HYPRCURSOR_THEME,Bibata-Modern-Ice"
         "HYPRCURSOR_SIZE,24"
         "QT_QPA_PLATFORMTHEME,qt5ct"
+        
+        # NVIDIA specific environment variables
+        "LIBVA_DRIVER_NAME,nvidia"           # Hardware acceleration
+        "GBM_BACKEND,nvidia-drm"             # Force GBM backend
+        "__GLX_VENDOR_LIBRARY_NAME,nvidia"   # GLX vendor
+        "__GL_GSYNC_ALLOWED,1"               # Enable G-Sync if supported
+        "__GL_VRR_ALLOWED,0"                 # Disable VRR to avoid game issues
+        "WLR_NO_HARDWARE_CURSORS,1"          # Fix cursor issues on NVIDIA
+        "WLR_DRM_NO_ATOMIC,1"                # Legacy mode (try disabling if issues)
       ];
       
       # Input configuration

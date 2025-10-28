@@ -1,6 +1,10 @@
 { config, pkgs, inputs, ... }:
 
 {
+  imports = [
+    ../../system/nvidia-laptop.nix
+  ];
+  
   # Laptop specific configuration
   
   networking.hostName = "zeph-laptop";
@@ -65,6 +69,11 @@
     # Add laptop-specific packages here
     brightnessctl  # Screen brightness control
     acpi           # Battery info
+    
+    # NVIDIA utilities
+    nvtopPackages.full  # GPU monitoring
+    vulkan-tools        # Vulkan utilities
+    glxinfo             # OpenGL info
   ];
 
   # Enable touchpad support
