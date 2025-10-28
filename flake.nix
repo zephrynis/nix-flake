@@ -52,9 +52,18 @@
                 "DP-1,3840x2160@60,2560x0,1"    # 4K monitor to the right
               ];
               
-              # Set workspace 1 on the main monitor
+              # Assign workspaces to specific monitors
               wayland.windowManager.hyprland.settings.workspace = [
                 "1, monitor:DP-2, default:true"
+                "2, monitor:DP-1"
+                "3, monitor:DP-2"
+                "4, monitor:DP-1"
+                "5, monitor:DP-2"
+                "6, monitor:DP-1"
+                "7, monitor:DP-2"
+                "8, monitor:DP-1"
+                "9, monitor:DP-2"
+                "10, monitor:DP-1"
               ];
             };
           }
