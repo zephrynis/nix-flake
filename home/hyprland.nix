@@ -22,6 +22,7 @@
         "waybar"
         "dunst"
         "nm-applet --indicator"  # WiFi manager in system tray
+        "vicinae server"         # Start Vicinae server
       ];
       
       # Environment variables
@@ -167,7 +168,7 @@
       
       # Release keybinds - Super key alone opens app launcher
       bindr = [
-        "SUPER, SUPER_L, exec, pkill vicinae || vicinae"
+        "SUPER, SUPER_L, exec, vicinae toggle"
       ];
       
       # Mouse bindings
