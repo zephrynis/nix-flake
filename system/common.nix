@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -6,6 +6,46 @@
   ];
 
   # Common system configuration shared across all machines
+  
+  # User configuration (shared across all machines)
+  users.users.zeph = {
+    isNormalUser = true;
+    description = "Zephrynis";
+    extraGroups = [ "networkmanager" "wheel" "video" "audio" ];
+    shell = pkgs.zsh;
+  };
+
+  # Enable zsh system-wide
+  programs.zsh.enable = true;
+
+  # Hyprland - Tiling Wayland compositor (shared configuration)
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  };
+  
+  # Enable X11 for XWayland support
+  services.xserver.enable = true;
+  
+  # Display manager - SDDM with Wayland support
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+  };
+
+  # Fonts (shared across all machines)
+  fonts.packages = with pkgs; [
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-emoji
+    liberation_ttf
+    fira-code
+    fira-code-symbols
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.iosevka
+  ];
   
   # Bootloader
   boot.loader.systemd-boot.enable = true;

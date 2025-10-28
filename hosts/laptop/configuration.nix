@@ -9,35 +9,6 @@
   
   networking.hostName = "zeph-laptop";
 
-  # Users configuration
-  users.users.zeph = {
-    isNormalUser = true;
-    description = "Zephrynis";
-    extraGroups = [ "networkmanager" "wheel" "video" "audio" ];
-    shell = pkgs.zsh;
-  };
-
-  # Enable zsh system-wide
-  programs.zsh.enable = true;
-
-  # Hyprland - Tiling Wayland compositor
-  programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-  };
-  
-  # Enable X11 for XWayland support
-  services.xserver = {
-    enable = true;
-  };
-  
-  # Use SDDM for login (works with Wayland)
-  services.displayManager.sddm = {
-    enable = true;
-    wayland.enable = true;
-  };
-
   # Laptop-specific power management
   # Choose either TLP or power-profiles-daemon (not both)
   # TLP is more advanced, power-profiles-daemon is simpler and integrates better with KDE
@@ -85,17 +56,4 @@
       disableWhileTyping = true;
     };
   };
-
-  # Fonts
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-emoji
-    liberation_ttf
-    fira-code
-    fira-code-symbols
-    nerd-fonts.fira-code
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.iosevka
-  ];
 }
