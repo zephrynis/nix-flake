@@ -13,11 +13,11 @@
       
       # Autostart applications
       exec-once = [
-        # For GIF/WebP/static images - use swww:
+        # For GIF/WebP/static images - use swww (works on all monitors):
         # "swww-daemon && swww img ~/nix-flake/assets/wallpaper.gif"
         
-        # For MP4 videos - use mpvpaper (replace 'eDP-1' with your monitor name from 'hyprctl monitors'):
-        "mpvpaper -o 'no-audio loop' eDP-1 ~/nix-flake/assets/wallpaper.mp4"
+        # For MP4 videos - use mpvpaper with wildcard for all monitors:
+        "mpvpaper -o 'no-audio loop' '*' ~/nix-flake/assets/wallpaper.mp4"
         
         "waybar"
         "dunst"
