@@ -43,11 +43,11 @@
             home-manager.backupFileExtension = "backup";
             
             # User configuration with desktop-specific overrides
-            home-manager.users.zeph = { ... }: {
+            home-manager.users.zeph = { lib, ... }: {
               imports = [ ./home/home.nix ];
               
               # Desktop-specific Hyprland monitor configuration
-              wayland.windowManager.hyprland.settings.monitor = [
+              wayland.windowManager.hyprland.settings.monitor = lib.mkForce [
                 "DP-2,2560x1440@165,0x0,1"    # Main monitor (1440p @ 165Hz)
                 "DP-1,3840x2160@60,2560x0,1"  # 4K monitor to the right
               ];
