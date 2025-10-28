@@ -48,8 +48,13 @@
               
               # Desktop-specific Hyprland monitor configuration
               wayland.windowManager.hyprland.settings.monitor = lib.mkForce [
-                "DP-2,2560x1440@165,0x0,1"    # Main monitor (1440p @ 165Hz)
-                "DP-1,3840x2160@60,2560x0,1"  # 4K monitor to the right
+                "DP-2,2560x1440@165,0x0,1"      # Main monitor (1440p @ 165Hz) at origin
+                "DP-1,3840x2160@60,2560x0,1"    # 4K monitor to the right
+              ];
+              
+              # Set workspace 1 on the main monitor
+              wayland.windowManager.hyprland.settings.workspace = [
+                "1, monitor:DP-2, default:true"
               ];
             };
           }
