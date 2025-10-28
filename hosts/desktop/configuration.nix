@@ -7,7 +7,7 @@
   
   # Desktop PC specific configuration
   # RTX 3080 - Enable open-source kernel module for better performance
-  hardware.nvidia.open = true;
+  hardware.nvidia.open = lib.mkForce true;
   
   networking.hostName = "zeph-desktop";
 
