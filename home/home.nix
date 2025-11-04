@@ -40,9 +40,9 @@
     # spotify
     
     # Communication
-    # legcord
+    legcord
     teams-for-linux
-    discord
+    # discord
     # slack
     
     # Screenshots and screen recording
