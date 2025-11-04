@@ -7,8 +7,9 @@
   programs.ags = {
     enable = true;
     
-    # null = use ~/.config/ags (colorshell files are there)
-    configDir = null;
+    # Use colorshell configuration from flake directory
+    # The gresource file needs to be pre-built in the source
+    configDir = ./ags-config;
     
     # Add Astal packages needed for colorshell
     extraPackages = with pkgs; [
@@ -40,8 +41,21 @@
     ];
   };
   
-  # Install icon theme system-wide to fix colorshell icon warnings
+  # Install icon themes system-wide to fix colorshell icon warnings
   home.packages = with pkgs; [
     papirus-icon-theme
+    adwaita-icon-theme
   ];
+  
+  # Set GTK icon theme to Papirus
+  gtk = {
+    enable = true;
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
+  };
+  
+  # Manage pywal colors for colorshell
+  home.file.".cache/wal/colors.json".source = ./pywal-colors/colors.json;
 }

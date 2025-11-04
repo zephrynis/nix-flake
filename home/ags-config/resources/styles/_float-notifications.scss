@@ -1,0 +1,18 @@
+@use "./colors";
+@use "./mixins";
+
+.floating-notifications-container {
+  padding: 16px;
+
+  & .float-notification {
+    $radius: 18px;
+
+    box-shadow: 0 0 8px 1px colors.$bg-translucent;
+    border-radius: $radius;
+
+    & .notification {
+      padding: 4px;
+      border-radius: $radius;
+    }
+  }
+}
