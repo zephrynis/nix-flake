@@ -41,6 +41,12 @@
         "__GL_VRR_ALLOWED,0"                 # Disable VRR to avoid game issues
         "WLR_NO_HARDWARE_CURSORS,1"          # Fix cursor issues on NVIDIA
         "WLR_DRM_NO_ATOMIC,1"                # Legacy mode (try disabling if issues)
+        
+        # Scaling for XWayland apps
+        "GDK_SCALE,1.5"                      # GTK app scaling (matches 4K monitor scale)
+        "GDK_DPI_SCALE,0.67"                 # GTK DPI scaling (inverse of GDK_SCALE)
+        "QT_AUTO_SCREEN_SCALE_FACTOR,1"      # Qt automatic scaling
+        "QT_SCALE_FACTOR,1.5"                # Qt manual scaling for 4K monitor
       ];
       
       # Input configuration
