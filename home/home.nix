@@ -205,14 +205,14 @@
   # Override desktop entries to use Wayland flags for Electron apps
   xdg.desktopEntries = {
     legcord = {
-      name = "Legcord";
+      name = "Discord";
       exec = "${pkgs.legcord}/bin/legcord --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland %U";
       icon = "legcord";
       type = "Application";
       categories = [ "Network" "InstantMessaging" ];
     };
     teams-for-linux = {
-      name = "Microsoft Teams for Linux";
+      name = "Teams";
       exec = "${pkgs.teams-for-linux}/bin/teams-for-linux --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland %U";
       icon = "teams-for-linux";
       type = "Application";
