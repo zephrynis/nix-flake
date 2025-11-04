@@ -16,8 +16,9 @@
         # For GIF/WebP/static images - use swww (works on all monitors):
         # "swww-daemon && swww img ~/nix-flake/assets/wallpaper.gif"
         
-        # For MP4 videos - use mpvpaper with wildcard for all monitors:
-        "mpvpaper -o 'no-audio loop' '*' ~/nix-flake/assets/wallpaper.mp4"
+        # For MP4 videos - run separate instances per monitor for proper scaling:
+        "mpvpaper -o 'no-audio loop' DP-2 ~/nix-flake/assets/wallpaper.mp4"
+        "mpvpaper -o 'no-audio loop' DP-1 ~/nix-flake/assets/wallpaper.mp4"
         
         "waybar"
         "dunst"
