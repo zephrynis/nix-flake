@@ -20,7 +20,7 @@
         "mpvpaper -o 'no-audio loop' DP-2 ~/nix-flake/assets/wallpaper.mp4"
         "mpvpaper -o 'no-audio loop' DP-1 ~/nix-flake/assets/wallpaper.mp4"
         
-        "ags"              # Start AGS (bar and widgets)
+        "ags run"          # Start AGS (bar and widgets)
         "dunst"
         "nm-applet --indicator"  # WiFi manager in system tray
         "vicinae server"         # Start Vicinae server

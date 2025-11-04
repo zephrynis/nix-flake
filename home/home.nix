@@ -3,7 +3,6 @@
 {
   imports = [
     ./hyprland.nix
-    ./ags.nix
   ];
 
   # Home Manager configuration for user-level dotfiles and applications
@@ -58,10 +57,10 @@
     # obs-studio
     
     # Hyprland essentials
-    # waybar  # Status bar - replaced by AGS
+    waybar  # Status bar
     dunst  # Notifications
     wofi  # App launcher
-    rofi-bluetooth  # Bluetooth menu for Waybar
+    rofi-bluetooth  # Bluetooth menu
     networkmanagerapplet  # WiFi manager applet for system tray
     # rofi-wayland  # Alternative launcher
     

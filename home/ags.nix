@@ -7,11 +7,14 @@
   programs.ags = {
     enable = true;
     
+    # null = use ~/.config/ags, or set to a path to symlink
+    configDir = null;
+    
     # Add additional packages needed for AGS
     extraPackages = with pkgs; [
-      gtksourceview
-      webkitgtk
-      accountsservice
+      inputs.astal.packages.${pkgs.system}.battery
+      inputs.astal.packages.${pkgs.system}.bluetooth
+      inputs.astal.packages.${pkgs.system}.network
     ];
   };
   

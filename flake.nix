@@ -16,14 +16,19 @@
     # Vicinae - Application launcher
     vicinae.url = "github:vicinaehq/vicinae";
     
-    # AGS - Aylur's GTK Shell for custom widgets/bar
-    ags.url = "github:Aylur/ags";
+    # Astal - Required for AGS
+    astal.url = "github:aylur/astal";
+    astal.inputs.nixpkgs.follows = "nixpkgs";
+    
+    # AGS - Aylur's GTK Shell for custom widgets/bar (v1)
+    ags.url = "github:Aylur/ags/v1";
+    ags.inputs.nixpkgs.follows = "nixpkgs";
     
     # Optional: Other useful inputs
     # nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs, home-manager, hyprland, vicinae, ags, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, hyprland, vicinae, astal, ags, ... }@inputs: {
     # NixOS configuration for your hostname(s)
     nixosConfigurations = {
       # Desktop PC configuration
