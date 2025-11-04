@@ -83,6 +83,18 @@
   # Enable CUPS for printing
   services.printing.enable = true;
 
+  # Enable bluetooth
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    settings = {
+      General = {
+        Enable = "Source,Sink,Media,Socket";
+      };
+    };
+  };
+  services.blueman.enable = true;
+
   # Enable OpenGL
   hardware.graphics = {
     enable = true;
