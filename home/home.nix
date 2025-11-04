@@ -171,6 +171,12 @@
       package = pkgs.bibata-cursors;
       size = 24;
     };
+    
+    # Increase font size for better readability on 4K
+    font = {
+      name = "Sans";
+      size = 11;  # Increase if needed (default is usually 10)
+    };
   };
 
   # Qt theming

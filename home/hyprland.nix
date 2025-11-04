@@ -68,6 +68,11 @@
         allow_tearing = false;
       };
       
+      # Enable better fractional scaling (experimental)
+      xwayland = {
+        force_zero_scaling = true;
+      };
+      
       # Decoration
       decoration = {
         rounding = 10;
