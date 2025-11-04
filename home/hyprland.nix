@@ -20,7 +20,7 @@
         "mpvpaper -o 'no-audio loop' DP-2 ~/nix-flake/assets/wallpaper.mp4"
         "mpvpaper -o 'no-audio loop' DP-1 ~/nix-flake/assets/wallpaper.mp4"
         
-        "waybar"
+        "ags"              # Start AGS (bar and widgets)
         "dunst"
         "nm-applet --indicator"  # WiFi manager in system tray
         "vicinae server"         # Start Vicinae server
@@ -118,6 +118,8 @@
       windowrulev2 = [
         "float,class:^(pavucontrol)$"
         "float,class:^(blueman-manager)$"
+        "size 600 400,class:^(blueman-manager)$"
+        "center,class:^(blueman-manager)$"
       ];
       
       # Keybindings
