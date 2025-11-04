@@ -20,8 +20,8 @@
         "mpvpaper -o 'no-audio loop' DP-2 ~/nix-flake/assets/wallpaper.mp4"
         "mpvpaper -o 'no-audio loop' DP-1 ~/nix-flake/assets/wallpaper.mp4"
         
-        "ags run"          # Start AGS (bar and widgets)
-        "dunst"
+        "ags run --gtk 4"  # Start AGS with colorshell (includes notification daemon)
+        # "dunst"          # Disabled - colorshell handles notifications
         "nm-applet --indicator"  # WiFi manager in system tray
         "vicinae server"         # Start Vicinae server
       ];
@@ -33,6 +33,9 @@
         "HYPRCURSOR_THEME,Bibata-Modern-Ice"
         "HYPRCURSOR_SIZE,24"
         "QT_QPA_PLATFORMTHEME,qt5ct"
+        
+        # XDG directories for colorshell
+        "XDG_CACHE_HOME,$HOME/.cache"
         
         # NVIDIA specific environment variables
         "LIBVA_DRIVER_NAME,nvidia"           # Hardware acceleration

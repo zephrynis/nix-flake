@@ -20,9 +20,10 @@
     astal.url = "github:aylur/astal";
     astal.inputs.nixpkgs.follows = "nixpkgs";
     
-    # AGS - Aylur's GTK Shell for custom widgets/bar (v1)
-    ags.url = "github:Aylur/ags/v1";
+    # AGS - Aylur's GTK Shell for custom widgets/bar (v3)
+    ags.url = "github:Aylur/ags";
     ags.inputs.nixpkgs.follows = "nixpkgs";
+    ags.inputs.astal.follows = "astal";
     
     # Optional: Other useful inputs
     # nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
