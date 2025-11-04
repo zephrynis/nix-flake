@@ -23,8 +23,10 @@
       "10": "10"
     },
     "persistent-workspaces": {
-      "*": 3
-    }
+      "DP-2": [1, 3, 5, 7, 9],
+      "DP-1": [2, 4, 6, 8, 10]
+    },
+    "sort-by-number": true
   },
   
   "hyprland/window": {
