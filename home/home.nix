@@ -46,20 +46,22 @@
     # spotify
     
     # Communication
-    (legcord.override {
-      commandLineArgs = [
-        "--enable-features=UseOzonePlatform,WaylandWindowDecorations"
-        "--ozone-platform=wayland"
-      ];
-    })
-    (teams-for-linux.override {
-      commandLineArgs = [
-        "--enable-features=UseOzonePlatform,WaylandWindowDecorations"
-        "--ozone-platform=wayland"
-      ];
-    })
+    legcord
+    teams-for-linux
     # discord
     # slack
+    
+    # Wayland wrappers for Electron apps
+    (pkgs.writeShellScriptBin "legcord-wayland" ''
+      exec ${pkgs.legcord}/bin/legcord \
+        --enable-features=UseOzonePlatform,WaylandWindowDecorations \
+        --ozone-platform=wayland "$@"
+    '')
+    (pkgs.writeShellScriptBin "teams-wayland" ''
+      exec ${pkgs.teams-for-linux}/bin/teams-for-linux \
+        --enable-features=UseOzonePlatform,WaylandWindowDecorations \
+        --ozone-platform=wayland "$@"
+    '')
     
     # Screenshots and screen recording
     grim  # Screenshot tool for Wayland
