@@ -3,6 +3,7 @@
 {
   imports = [
     ./hyprland.nix
+    ./ags.nix
   ];
 
   # Home Manager configuration for user-level dotfiles and applications
