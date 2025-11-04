@@ -16,7 +16,13 @@
     inputs.vicinae.packages.${pkgs.system}.default  # Vicinae launcher
     
     # Development tools
-    vscode
+    (vscode.override {
+      commandLineArgs = [
+        "--enable-features=UseOzonePlatform"
+        "--ozone-platform=wayland"
+        "--enable-wayland-ime"
+      ];
+    })
     # neovim
     
     # Browsers
@@ -40,8 +46,18 @@
     # spotify
     
     # Communication
-    legcord
-    teams-for-linux
+    (legcord.override {
+      commandLineArgs = [
+        "--enable-features=UseOzonePlatform,WaylandWindowDecorations"
+        "--ozone-platform=wayland"
+      ];
+    })
+    (teams-for-linux.override {
+      commandLineArgs = [
+        "--enable-features=UseOzonePlatform,WaylandWindowDecorations"
+        "--ozone-platform=wayland"
+      ];
+    })
     # discord
     # slack
     
