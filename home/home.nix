@@ -51,18 +51,6 @@
     # discord
     # slack
     
-    # Wayland wrappers for Electron apps
-    (pkgs.writeShellScriptBin "legcord-wayland" ''
-      exec ${pkgs.legcord}/bin/legcord \
-        --enable-features=UseOzonePlatform,WaylandWindowDecorations \
-        --ozone-platform=wayland "$@"
-    '')
-    (pkgs.writeShellScriptBin "teams-wayland" ''
-      exec ${pkgs.teams-for-linux}/bin/teams-for-linux \
-        --enable-features=UseOzonePlatform,WaylandWindowDecorations \
-        --ozone-platform=wayland "$@"
-    '')
-    
     # Screenshots and screen recording
     grim  # Screenshot tool for Wayland
     slurp  # Screen area selector for Wayland
@@ -210,6 +198,24 @@
     size = 24;
     gtk.enable = true;
     x11.enable = true;
+  };
+  
+  # Override desktop entries to use Wayland flags for Electron apps
+  xdg.desktopEntries = {
+    legcord = {
+      name = "Legcord";
+      exec = "${pkgs.legcord}/bin/legcord --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland %U";
+      icon = "legcord";
+      type = "Application";
+      categories = [ "Network" "InstantMessaging" ];
+    };
+    teams-for-linux = {
+      name = "Microsoft Teams for Linux";
+      exec = "${pkgs.teams-for-linux}/bin/teams-for-linux --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland %U";
+      icon = "teams-for-linux";
+      type = "Application";
+      categories = [ "Network" "InstantMessaging" ];
+    };
   };
   
   # Waybar configuration with glassmorphic theme
