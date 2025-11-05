@@ -46,6 +46,9 @@
     # vlc
     # spotify
     
+    # Gaming
+    prismlauncher  # Minecraft launcher
+    
     # Communication
     legcord
     teams-for-linux
@@ -55,6 +58,7 @@
     # Screenshots and screen recording
     grim  # Screenshot tool for Wayland
     slurp  # Screen area selector for Wayland
+    jq  # JSON processor for window info
     # obs-studio
     
     # Hyprland essentials
@@ -223,6 +227,12 @@
   # Waybar configuration with glassmorphic theme
   home.file.".config/waybar/config".source = ./waybar-config.json;
   home.file.".config/waybar/style.css".source = ./waybar-style.css;
+  
+  # Screenshot script
+  home.file.".local/bin/screenshot" = {
+    source = ./scripts/screenshot.sh;
+    executable = true;
+  };
 
   # Flatpaks are managed in system/flatpak.nix
 

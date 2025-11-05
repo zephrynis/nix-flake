@@ -65,8 +65,8 @@
         gaps_in = 5;
         gaps_out = 10;
         border_size = 2;
-        "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
-        "col.inactive_border" = "rgba(595959aa)";
+        "col.active_border" = "rgba(4a7aa1ee) rgba(2a5d82ee) 45deg";  # Dark pale blue gradient
+        "col.inactive_border" = "rgba(3d4955aa)";  # Darker blue-gray
         
         layout = "dwindle";
         allow_tearing = false;
@@ -171,6 +171,11 @@
         # Special workspace (scratchpad)
         "$mod, S, togglespecialworkspace, magic"
         "$mod SHIFT, S, movetoworkspace, special:magic"
+        
+        # Screenshots
+        ", Print, exec, $HOME/.local/bin/screenshot area"              # Area selection (default)
+        "$mod, Print, exec, $HOME/.local/bin/screenshot full"          # Full screen
+        "$mod SHIFT, Print, exec, $HOME/.local/bin/screenshot window"  # Active window
         
         # Scroll through workspaces
         "$mod, mouse_down, workspace, e+1"
