@@ -28,6 +28,9 @@
   # Enable X11 for XWayland support
   services.xserver.enable = true;
   
+  # Exclude xterm (we use alacritty instead)
+  services.xserver.excludePackages = [ pkgs.xterm ];
+  
   # Display manager - SDDM with Wayland support
   services.displayManager.sddm = {
     enable = true;

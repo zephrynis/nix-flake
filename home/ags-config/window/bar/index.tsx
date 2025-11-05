@@ -2,7 +2,7 @@ import { Astal, Gtk } from "ags/gtk4";
 import { Tray } from "./widgets/Tray";
 import { Workspaces } from "./widgets/Workspaces";
 import { FocusedClient } from "./widgets/FocusedClient";
-import { Apps } from "./widgets/Apps";
+// import { Apps } from "./widgets/Apps";
 import { Clock } from "./widgets/Clock";
 import { Status } from "./widgets/Status";
 import { Media } from "./widgets/Media";
@@ -21,7 +21,6 @@ export const Bar = (mon: number) => {
                   halign={Gtk.Align.START} spacing={widgetSpacing}
                   $type="start">
 
-                    <Apps />
                     <Workspaces />
                     <FocusedClient />
                 </Gtk.Box>

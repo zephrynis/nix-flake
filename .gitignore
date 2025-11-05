@@ -11,3 +11,5 @@ result-*
 # Hardware configuration (may contain sensitive info)
 # Uncomment if you don't want to commit hardware configs
 # hosts/*/hardware-configuration.nix
+
+node_modules
