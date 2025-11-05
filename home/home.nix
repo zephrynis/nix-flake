@@ -233,6 +233,12 @@
     source = ./scripts/screenshot.sh;
     executable = true;
   };
+  
+  # Wallpaper script
+  home.file.".local/bin/set-wallpaper" = {
+    source = ./scripts/set-wallpaper.sh;
+    executable = true;
+  };
 
   # Flatpaks are managed in system/flatpak.nix
 

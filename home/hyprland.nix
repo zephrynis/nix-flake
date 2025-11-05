@@ -13,12 +13,8 @@
       
       # Autostart applications
       exec-once = [
-        # For GIF/WebP/static images - use swww (works on all monitors):
-        # "swww-daemon && swww img ~/nix-flake/assets/wallpaper.gif"
-        
-        # For MP4 videos - run separate instances per monitor for proper scaling:
-        "mpvpaper -o 'no-audio loop' DP-2 ~/nix-flake/assets/wallpaper.mp4"
-        "mpvpaper -o 'no-audio loop' DP-1 ~/nix-flake/assets/wallpaper.mp4"
+        # Set wallpaper on all monitors automatically
+        "$HOME/.local/bin/set-wallpaper"
         
         "ags run --gtk 4"  # Start AGS with colorshell (includes notification daemon)
         # "dunst"          # Disabled - colorshell handles notifications
