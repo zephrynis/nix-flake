@@ -31,29 +31,7 @@
     # chromium
     
     # Terminal emulators
-    (pkgs.runCommand "alacritty-no-desktop" {
-      buildInputs = [ pkgs.alacritty ];
-    } ''
-      mkdir -p $out/bin
-      ln -s ${pkgs.alacritty}/bin/* $out/bin/
-      
-      # Copy all other directories except share/applications
-      for dir in ${pkgs.alacritty}/*; do
-        if [[ "$dir" != "${pkgs.alacritty}/bin" && "$dir" != "${pkgs.alacritty}/share" ]]; then
-          ln -s "$dir" $out/$(basename "$dir")
-        fi
-      done
-      
-      # Copy share but exclude applications
-      if [ -d ${pkgs.alacritty}/share ]; then
-        mkdir -p $out/share
-        for item in ${pkgs.alacritty}/share/*; do
-          if [[ "$(basename $item)" != "applications" ]]; then
-            ln -s "$item" $out/share/$(basename "$item")
-          fi
-        done
-      fi
-    '')
+    alacritty
     # kitty
     # wezterm
     
@@ -157,7 +135,7 @@
 
   # Alacritty terminal emulator
   programs.alacritty = {
-    enable = false;  # Disabled to avoid duplicate desktop file, using custom package in home.packages instead
+    enable = true;
     settings = {
       window = {
         opacity = 0.9;
@@ -230,16 +208,6 @@
   
   # Override desktop entries
   xdg.desktopEntries = {
-    # Add "cmd" to alacritty's comment so it shows up when searching "cmd"
-    alacritty = {
-      name = "Alacritty";
-      genericName = "Terminal cmd";
-      comment = "A fast, cross-platform, OpenGL terminal emulator";
-      exec = "alacritty";
-      icon = "Alacritty";
-      type = "Application";
-      categories = [ "System" "TerminalEmulator" ];
-    };
     legcord = {
       name = "Discord";
       exec = "${pkgs.legcord}/bin/legcord --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland %U";
