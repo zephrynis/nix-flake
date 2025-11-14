@@ -31,11 +31,22 @@
   # Exclude xterm (we use alacritty instead)
   services.xserver.excludePackages = [ pkgs.xterm ];
   
-  # Display manager - SDDM with Wayland support
-  services.displayManager.sddm = {
+    # PAM service for hyprlock (required for hyprlock to work)
+  security.pam.services.hyprlock = {};
+  
+  # Display manager - greetd with autologin to Hyprland
+  services.greetd = {
     enable = true;
-    wayland.enable = true;
+    settings.default_session = {
+      command = "Hyprland";
+      user = "zeph";
+    };
   };
+  
+  # Environment for greeter
+  environment.etc."greetd/environments".text = ''
+    Hyprland
+  '';
 
   # Fonts (shared across all machines)
   fonts.packages = with pkgs; [
@@ -104,7 +115,7 @@
     enable32Bit = true;
   };
 
-  # System-wide packages
+    # System-wide packages
   environment.systemPackages = with pkgs; [
     vim
     wget
@@ -114,6 +125,8 @@
     neofetch
     unzip
     zip
+      # Steam (system-wide)
+      steam
   ];
 
   # Enable flakes

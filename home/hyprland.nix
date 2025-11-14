@@ -20,6 +20,9 @@
         # "dunst"          # Disabled - colorshell handles notifications
         "nm-applet --indicator"  # WiFi manager in system tray
         "vicinae server"         # Start Vicinae server
+        
+        # Lock screen after a short delay (let Hyprland initialize first)
+        "sleep 2 && hyprlock"
       ];
       
       # Environment variables
@@ -172,6 +175,9 @@
         ", Print, exec, $HOME/.local/bin/screenshot area"              # Area selection (default)
         "$mod, Print, exec, $HOME/.local/bin/screenshot full"          # Full screen
         "$mod SHIFT, Print, exec, $HOME/.local/bin/screenshot window"  # Active window
+        
+        # Lock screen
+        "$mod, L, exec, hyprlock"
         
         # Scroll through workspaces
         "$mod, mouse_down, workspace, e+1"

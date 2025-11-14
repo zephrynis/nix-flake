@@ -4,6 +4,7 @@
   imports = [
     ./hyprland.nix
     ./ags.nix
+    inputs.spicetify-nix.homeManagerModules.default
   ];
 
   # Home Manager configuration for user-level dotfiles and applications
@@ -67,6 +68,8 @@
     wofi  # App launcher
     rofi-bluetooth  # Bluetooth menu
     networkmanagerapplet  # WiFi manager applet for system tray
+    hyprlock  # Screen locker for Hyprland
+    hypridle  # Idle daemon for Hyprland (auto-lock)
     # rofi-wayland  # Alternative launcher
     
     # Wayland utilities
@@ -228,6 +231,91 @@
   home.file.".config/waybar/config".source = ./waybar-config.json;
   home.file.".config/waybar/style.css".source = ./waybar-style.css;
   
+  # Hyprlock configuration
+  home.file.".config/hypr/hyprlock.conf".text = ''
+    # Hyprlock configuration
+    # Documentation: https://wiki.hyprland.org/Hypr-Ecosystem/hyprlock/
+
+    # General settings
+    general {
+        hide_cursor = true
+        ignore_empty_input = true
+    }
+
+    # Background
+    background {
+        monitor =
+        path = screenshot  # Use a blurred screenshot of current screen
+        blur_passes = 3
+        blur_size = 8
+        noise = 0.0117
+        contrast = 0.8916
+        brightness = 0.8172
+        vibrancy = 0.1696
+        vibrancy_darkness = 0.0
+    }
+
+    # Input field
+    input-field {
+        monitor =
+        size = 250, 50
+        outline_thickness = 3
+        dots_size = 0.33
+        dots_spacing = 0.15
+        dots_center = true
+        
+        outer_color = rgba(4a7aa1ee)  # Match your theme accent color
+        inner_color = rgba(050a0eff)  # Match your theme background
+        font_color = rgb(cdd6f4)
+        fade_on_empty = true
+        
+        placeholder_text = <span foreground="##cdd6f4">Password...</span>
+        
+        position = 0, -20
+        halign = center
+        valign = center
+    }
+
+    # Time
+    label {
+        monitor =
+        text = cmd[update:1000] echo "$(date +"%H:%M")"
+        color = rgba(cdd6f4ff)
+        font_size = 120
+        font_family = FiraCode Nerd Font
+        
+        position = 0, 80
+        halign = center
+        valign = center
+    }
+
+    # Date
+    label {
+        monitor =
+        text = cmd[update:1000] echo "$(date +"%A, %B %d")"
+        color = rgba(cdd6f4ff)
+        font_size = 24
+        font_family = FiraCode Nerd Font
+        
+        position = 0, -10
+        halign = center
+        valign = center
+    }
+
+    # User label
+    label {
+        monitor =
+        text = Hi there, $USER
+        color = rgba(cdd6f4ff)
+        font_size = 18
+        font_family = FiraCode Nerd Font
+        
+        position = 0, -80
+        halign = center
+        valign = center
+    }
+  '';
+  
   # Screenshot script
   home.file.".local/bin/screenshot" = {
     source = ./scripts/screenshot.sh;
@@ -241,6 +329,16 @@
   };
 
   # Flatpaks are managed in system/flatpak.nix
+
+  # Spicetify - Spotify customization with adblock
+  programs.spicetify = let
+    spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+  in {
+    enable = true;
+    enabledExtensions = with spicePkgs.extensions; [
+      adblock
+    ];
+  };
 
   # Let Home Manager manage itself
   programs.home-manager.enable = true;

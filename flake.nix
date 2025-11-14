@@ -25,11 +25,14 @@
     ags.inputs.nixpkgs.follows = "nixpkgs";
     ags.inputs.astal.follows = "astal";
     
+    # Spicetify - Spotify customization
+    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+    
     # Optional: Other useful inputs
     # nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs, home-manager, hyprland, vicinae, astal, ags, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, hyprland, vicinae, astal, ags, spicetify-nix, ... }@inputs: {
     # NixOS configuration for your hostname(s)
     nixosConfigurations = {
       # Desktop PC configuration
