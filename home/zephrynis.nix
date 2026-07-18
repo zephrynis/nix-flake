@@ -6,7 +6,7 @@
   home.username = "zephrynis";
   home.homeDirectory = "/home/zephrynis";
   # Matches the release era of system.stateVersion; never change afterwards.
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 
   programs.illogical-impulse = {
     enable = true;

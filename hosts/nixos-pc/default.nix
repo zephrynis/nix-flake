@@ -35,5 +35,5 @@
   i18n.defaultLocale = "en_GB.UTF-8";
 
   # Set to the NixOS release of the ISO used at install time; never change afterwards.
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 }
