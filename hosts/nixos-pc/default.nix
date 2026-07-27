@@ -50,6 +50,8 @@
 
   time.timeZone = "Europe/London";
   i18n.defaultLocale = "en_GB.UTF-8";
+  console.keyMap = "uk"; # TTYs
+  services.xserver.xkb.layout = "gb"; # SDDM greeter / X11; Hyprland is set in home/zephrynis.nix
 
   # Set to the NixOS release of the ISO used at install time; never change afterwards.
   system.stateVersion = "26.05";
