@@ -7,6 +7,7 @@
     ../../modules/desktop.nix
     ../../modules/nvidia.nix
     ../../modules/gaming.nix
+    ../../modules/tailscale.nix
   ];
 
   networking.hostName = "nixos-pc";
