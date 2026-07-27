@@ -16,6 +16,9 @@
 
   networking.networkmanager.enable = true; # required by illogical-flake
 
+  # Firmware blobs for Realtek RTL8821CU WiFi/Bluetooth dongle (and other devices)
+  hardware.enableRedistributableFirmware = true;
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
