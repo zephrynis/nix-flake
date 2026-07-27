@@ -17,6 +17,37 @@
       # `dotfiles` input (this is the only source-override mechanism):
       # inputs.dotfiles.url = "git+https://github.com/end-4/dots-hyprland?submodules=1&rev=<sha>";
     };
+
+    # GTK4 screenshare picker with live window/monitor previews — replaces the
+    # bare Qt hyprland-share-picker bundled with XDPH. Needs submodules.
+    hyprland-preview-share-picker = {
+      url = "git+https://github.com/WhySoBad/hyprland-preview-share-picker?submodules=1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Declarative Firefox extensions (rycee's firefox-addons, the set behind
+    # nur.repos.rycee.firefox-addons — avoids importing all of NUR). Imported
+    # as a source tree via callPackage rather than its flake output so the
+    # addons evaluate under the system nixpkgs (needed for allowUnfree, e.g.
+    # the 1Password extension).
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions";
+      flake = false;
+    };
+
+    # Main UI font of the current end-4 dots. Their installer clones this repo
+    # directly (the font is Google-proprietary, so no distro packages it).
+    google-sans-flex = {
+      url = "github:end-4/google-sans-flex";
+      flake = false;
+    };
+
+    # Declarative Spicetify (Spotify client mods). The home-manager module
+    # installs its own wrapped Spotify — pkgs.spotify must NOT be added anywhere.
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { nixpkgs, home-manager, ... }@inputs: {
