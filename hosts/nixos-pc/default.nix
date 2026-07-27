@@ -33,6 +33,21 @@
   };
   programs.fish.enable = true;
 
+  # 1Password desktop app + CLI. The module (vs a plain package) sets up the
+  # polkit policy for system-auth unlock and the setgid onepassword group the
+  # browser integration needs.
+  programs._1password-gui = {
+    enable = true;
+    polkitPolicyOwners = [ "zephrynis" ];
+  };
+  programs._1password.enable = true;
+  # 1Password verifies the browser binary's name before connecting the
+  # extension to the app; NixOS's wrapped Firefox isn't on its allowlist
+  environment.etc."1password/custom_allowed_browsers" = {
+    text = ".firefox-wrapped";
+    mode = "0755";
+  };
+
   time.timeZone = "Europe/London";
   i18n.defaultLocale = "en_GB.UTF-8";
 
