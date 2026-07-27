@@ -16,6 +16,17 @@ let
     fi
     exec ${share-picker}/bin/hyprland-preview-share-picker "$@"
   '';
+
+  # Icon-only derivation: copies the real Discord logo (scalable SVG) out of the
+  # discord package under the theme name `discord`, so the relabeled Vesktop
+  # launcher entry below shows the genuine Discord logo. The output is the raw
+  # SVG bytes with no store references, so `discord` itself stays OUT of the
+  # runtime closure — it's fetched only at build time and freed by GC.
+  discord-icon = pkgs.runCommand "discord-icon" { } ''
+    install -Dm644 \
+      "${pkgs.discord}/opt/Discord/modules/discord_desktop_core/app/images/discord.svg" \
+      "$out/share/icons/hicolor/scalable/apps/discord.svg"
+  '';
 in
 {
   imports = [
@@ -424,6 +435,24 @@ EOF
   # xdg-open and apps use this for directories. The claude-cli handler was
   # registered imperatively by claude-code — kept here since HM now owns
   # mimeapps.list.
+  # Relabel Vesktop's launcher entry to "Discord" with the real Discord logo.
+  # HM writes ~/.local/share/applications/vesktop.desktop, which shadows the
+  # package's own copy (user data dir wins in XDG_DATA_DIRS). Exec stays
+  # `vesktop`; StartupWMClass stays Vesktop so window matching still works.
+  xdg.desktopEntries.vesktop = {
+    name = "Discord";
+    genericName = "Internet Messenger";
+    exec = "vesktop %U";
+    icon = "discord";
+    categories = [ "Network" "InstantMessaging" "Chat" ];
+    mimeType = [ "x-scheme-handler/discord" ];
+    type = "Application";
+    settings = {
+      Keywords = "discord;vencord;electron;chat;";
+      StartupWMClass = "Vesktop";
+    };
+  };
+
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
@@ -437,6 +466,14 @@ EOF
     # config.yml into the store, which breaks `gh auth login`'s first-run write.
     gh
     nautilus
+    # Vesktop: Discord+Vencord with a real Wayland/PipeWire screenshare — a
+    # sane WebRTC bitrate (the official `discord` client starved it into
+    # macroblocks) and it streams desktop audio, which official Linux Discord
+    # can't. Uses the same xdg-desktop-portal-hyprland picker wired up above.
+    # Relabeled to "Discord" with the real Discord logo via the desktop-entry
+    # override + discord-icon below.
+    vesktop
+    discord-icon
     slack
     claude-code
     ripgrep
