@@ -142,10 +142,32 @@ in
   # sets this to qt6ct)
   home.sessionVariables.QT_QPA_PLATFORMTHEME = lib.mkForce "kde";
 
+  # Super+W opens Firefox instead of Chrome. The dots' hyprland/keybinds.lua
+  # binds it to $browser, which launch_first_available.sh resolves to the first
+  # installed of google-chrome-stable, zen, firefox, ... — so with Chrome
+  # installed it lands on Chrome. custom/keybinds.lua is sourced after the
+  # default, so unbind + rebind wins; re-appended after every recopy.
+  # Super+Shift+W is the "variant" pairing (Shift = variant throughout the dots)
+  # for the Firefox work profile, matching the firefox-work shim/desktop entry.
+  home.activation.browserKeybindFirefox = lib.hm.dag.entryAfter [ "hyprlandMonitorLayout" ] ''
+    hyprCustomKeybinds="$HOME/.config/hypr/custom/keybinds.lua"
+    if [ -f "$hyprCustomKeybinds" ] && ! grep -q 'App: Firefox' "$hyprCustomKeybinds"; then
+      cat >> "$hyprCustomKeybinds" << 'EOF'
+
+-- Super+W -> Firefox (appended by nix-flake, overrides the dots' browser bind)
+hl.unbind("SUPER + W")
+hl.bind("SUPER + W", hl.dsp.exec_cmd("firefox"), { description = "App: Firefox" })
+-- Super+Shift+W -> Firefox work profile (matches the firefox-work shim/WM class)
+hl.bind("SUPER + SHIFT + W", hl.dsp.exec_cmd("firefox -P work --name firefox-work"), { description = "App: Firefox (Work)" })
+EOF
+      echo "Rebound Super+W to Firefox and Super+Shift+W to Firefox (Work) in hypr/custom/keybinds.lua"
+    fi
+  '';
+
   # The illogical-flake copy step deletes/recreates ~/.config/hypr while
   # Hyprland is running; its mid-copy reload fails ("cannot open hyprland.lua")
   # and the error banner sticks. Reload once the configs are back in place.
-  home.activation.reloadHyprland = lib.hm.dag.entryAfter [ "hyprlandMonitorLayout" ] ''
+  home.activation.reloadHyprland = lib.hm.dag.entryAfter [ "browserKeybindFirefox" ] ''
     for instance in /run/user/$(id -u)/hypr/*/; do
       [ -d "$instance" ] || continue
       HYPRLAND_INSTANCE_SIGNATURE="$(basename "$instance")" \
