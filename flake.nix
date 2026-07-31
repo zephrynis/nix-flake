@@ -48,6 +48,11 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Declarative Flatpak app/remote management (extends services.flatpak). Used
+    # for the Minecraft Bedrock launcher, whose Flatpak build tracks newer,
+    # pairip-protected Bedrock releases ahead of the nixpkgs package.
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
   };
 
   outputs = { nixpkgs, home-manager, ... }@inputs: {
