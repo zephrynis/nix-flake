@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, ... }:
+{ config, inputs, lib, pkgs, ... }:
 
 let
   share-picker = inputs.hyprland-preview-share-picker.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -27,6 +27,45 @@ let
       "${pkgs.discord}/opt/Discord/modules/discord_desktop_core/app/images/discord.svg" \
       "$out/share/icons/hicolor/scalable/apps/discord.svg"
   '';
+
+  firefoxBin = "${config.programs.firefox.finalPackage}/bin/firefox";
+
+  # Redirects an app's outgoing links into the Firefox "work" profile, reusing
+  # the same --name/WM class as the firefox-work desktop entry so links land in
+  # the existing Work window. Linux has no per-app "use browser Y" mapping, so
+  # instead we launch the app (below) with this bin dir first on PATH and
+  # $BROWSER pointed here — covering both ways an app opens a link:
+  #   * `firefox-work` — the value we set for $BROWSER
+  #   * `xdg-open`      — a shim that sends only http/https to the work profile
+  #                       and delegates every other URI to the real xdg-open
+  # (Apps that call the org.freedesktop.portal.OpenURI portal directly bypass
+  # both and still use the global default — that can't be overridden per-app.)
+  work-browser = pkgs.symlinkJoin {
+    name = "firefox-work-browser-shim";
+    paths = [
+      (pkgs.writeShellScriptBin "firefox-work" ''
+        exec ${firefoxBin} -P work --name firefox-work "$@"
+      '')
+      (pkgs.writeShellScriptBin "xdg-open" ''
+        case "$1" in
+          http://*|https://*)
+            exec ${firefoxBin} -P work --name firefox-work "$@" ;;
+          *)
+            exec ${pkgs.xdg-utils}/bin/xdg-open "$@" ;;
+        esac
+      '')
+    ];
+  };
+
+  # Wraps an app binary so its links open in the Firefox work profile.
+  openLinksInWork = name: exe: pkgs.writeShellScriptBin name ''
+    export PATH=${work-browser}/bin:$PATH
+    export BROWSER=firefox-work
+    exec ${exe} "$@"
+  '';
+
+  slack-work-links = openLinksInWork "slack-work-links" "${pkgs.slack}/bin/slack";
+  obsidian-work-links = openLinksInWork "obsidian-work-links" "${pkgs.obsidian}/bin/obsidian";
 in
 {
   imports = [
@@ -475,11 +514,47 @@ EOF
     };
   };
 
+  # Route Slack's and Obsidian's outgoing links into the Firefox work profile
+  # by shadowing their package .desktop files (user data dir wins in
+  # XDG_DATA_DIRS) with copies whose Exec points at the openLinksInWork wrapper.
+  # Every other field is kept identical to the upstream entry.
+  xdg.desktopEntries.slack = {
+    name = "Slack";
+    genericName = "Slack Client for Linux";
+    comment = "Slack Desktop";
+    exec = "${slack-work-links}/bin/slack-work-links -s %U";
+    icon = "slack";
+    type = "Application";
+    startupNotify = true;
+    categories = [ "GNOME" "GTK" "Network" "InstantMessaging" ];
+    mimeType = [ "x-scheme-handler/slack" ];
+    settings.StartupWMClass = "Slack";
+  };
+  xdg.desktopEntries.obsidian = {
+    name = "Obsidian";
+    comment = "Knowledge base";
+    exec = "${obsidian-work-links}/bin/obsidian-work-links %u";
+    icon = "obsidian";
+    type = "Application";
+    categories = [ "Office" ];
+    mimeType = [ "x-scheme-handler/obsidian" ];
+  };
+
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
       "inode/directory" = "org.gnome.Nautilus.desktop";
       "x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
+      # Keep Firefox (personal profile) as the browser for all links. Pinned
+      # explicitly so google-chrome — installed below as an occasional-use app —
+      # can never register itself as the default link handler (HM owns
+      # mimeapps.list as a read-only symlink, so Chrome's first-run "make
+      # default" prompt physically can't rewrite these).
+      "x-scheme-handler/http" = "firefox.desktop";
+      "x-scheme-handler/https" = "firefox.desktop";
+      "x-scheme-handler/about" = "firefox.desktop";
+      "x-scheme-handler/unknown" = "firefox.desktop";
+      "text/html" = "firefox.desktop";
     };
   };
 
@@ -497,6 +572,12 @@ EOF
     vesktop
     discord-icon
     slack
+    # Obsidian: Markdown knowledge base / note-taking (unfree; allowUnfree
+    # already enabled for the other proprietary apps above).
+    obsidian
+    # Chrome: occasional-use only. Firefox stays the default link handler —
+    # the xdg.mimeApps http/https pins above keep Chrome from grabbing links.
+    google-chrome
     claude-code
     ripgrep
     fd
