@@ -71,6 +71,7 @@ in
   imports = [
     inputs.illogical-flake.homeManagerModules.default
     inputs.spicetify-nix.homeManagerModules.spicetify
+    ./spotify-ducking.nix
   ];
 
   home.username = "zephrynis";
