@@ -563,6 +563,8 @@ EOF
     # As a plain package, not programs.gh — the HM module symlinks a read-only
     # config.yml into the store, which breaks `gh auth login`'s first-run write.
     gh
+    # sshm: TUI to manage and connect to SSH hosts (reads/writes ~/.ssh/config)
+    sshm
     nautilus
     # Vesktop: Discord+Vencord with a real Wayland/PipeWire screenshare — a
     # sane WebRTC bitrate (the official `discord` client starved it into
