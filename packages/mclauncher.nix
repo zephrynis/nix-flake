@@ -1,8 +1,6 @@
 { pkgs }:
 
 let
-  lib = pkgs.lib;
-
   placeholderWordmark = pkgs.writeText "mclauncher-wordmark.svg" ''
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 160" role="img" aria-labelledby="title">
       <title id="title">MCLauncher placeholder wordmark</title>
@@ -22,9 +20,10 @@ let
     </svg>
   '';
 
+  # Keep the upstream pname here: Nixpkgs' Gradle dependency cache resolves
+  # the package by that attribute name. Only the final wrapped package below
+  # is renamed to mclauncher.
   mclauncher-unwrapped = pkgs.modrinth-app-unwrapped.overrideAttrs (old: {
-    pname = "mclauncher-unwrapped";
-
     nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.imagemagick ];
 
     # Keep Nixpkgs' dependency fetching/build machinery intact and only apply
@@ -143,6 +142,5 @@ wrapped.overrideAttrs (old: {
     description = "Downstream Modrinth-based Minecraft launcher with ads disabled and purple branding";
     homepage = "https://github.com/zephrynis/mclauncher";
     mainProgram = "MCLauncher";
-    license = lib.licenses.gpl3Only;
   };
 })
