@@ -75,24 +75,47 @@
     # for the Minecraft Bedrock launcher, whose Flatpak build tracks newer,
     # pairip-protected Bedrock releases ahead of the nixpkgs package.
     nix-flatpak.url = "github:gmodena/nix-flatpak";
+
+    # MCLauncher reuses Nixpkgs' Modrinth 0.19.1 source package so Cargo, Gradle,
+    # and pnpm dependency hashes remain upstream-maintained. Keep this separate
+    # from the system nixpkgs pin so adding the launcher cannot update the rest
+    # of the machine underneath us.
+    nixpkgs-mclauncher.url = "github:NixOS/nixpkgs/7a14922897bb1adb8f458a917d33ec9e1ca5ae18";
   };
 
-  outputs = { nixpkgs, home-manager, ... }@inputs: {
-    nixosConfigurations.nixos-pc = nixpkgs.lib.nixosSystem {
+  outputs = { nixpkgs, home-manager, ... }@inputs:
+    let
       system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
-      modules = [
-        ./hosts/nixos-pc
+      mclauncherPkgs = import inputs.nixpkgs-mclauncher {
+        inherit system;
+        config.allowUnfree = true;
+      };
+    in
+    {
+      packages.${system}.mclauncher = import ./packages/mclauncher.nix {
+        pkgs = mclauncherPkgs;
+      };
 
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.backupFileExtension = "hm-bak";
-          home-manager.users.zephrynis = import ./home/zephrynis.nix;
-        }
-      ];
+      nixosConfigurations.nixos-pc = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/nixos-pc
+
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.backupFileExtension = "hm-bak";
+            home-manager.users.zephrynis = {
+              imports = [
+                ./home/zephrynis.nix
+                ./home/mclauncher.nix
+              ];
+            };
+          }
+        ];
+      };
     };
-  };
 }
