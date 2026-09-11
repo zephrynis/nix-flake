@@ -1,7 +1,19 @@
 { config, inputs, lib, pkgs, ... }:
 
 let
-  share-picker = inputs.hyprland-preview-share-picker.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  share-picker = inputs.hyprland-preview-share-picker.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+    # XDPH supplies a stable window address. Matching only class/title drops
+    # windows when the portal's title is stale (e.g. after changing Chrome tabs).
+    # Keep the old match only for portals that do not provide an address.
+    postPatch = (old.postPatch or "") + ''
+      substituteInPlace src/views/windows.rs --replace-fail \
+        'self.clients.iter().find(|c| c.class.eq(&toplevel.class) && c.title.eq(&toplevel.title))' \
+        'self.clients.iter().find(|c| match toplevel.window_address {
+            Some(address) => u64::from_str_radix(&c.address.to_string()[2..], 16).ok() == Some(address),
+            None => c.class.eq(&toplevel.class) && c.title.eq(&toplevel.title),
+        })'
+    '';
+  });
   # Substitutes the current wallpaper palette (matugen's colors.json) into the
   # picker stylesheet template on every launch, so the picker re-themes with
   # the wallpaper, then hands off to the real picker binary.
@@ -15,17 +27,6 @@ let
       cp -f "$dir/style.css.in" "$dir/generated.css"
     fi
     exec ${share-picker}/bin/hyprland-preview-share-picker "$@"
-  '';
-
-  # Icon-only derivation: copies the real Discord logo (scalable SVG) out of the
-  # discord package under the theme name `discord`, so the relabeled Vesktop
-  # launcher entry below shows the genuine Discord logo. The output is the raw
-  # SVG bytes with no store references, so `discord` itself stays OUT of the
-  # runtime closure — it's fetched only at build time and freed by GC.
-  discord-icon = pkgs.runCommand "discord-icon" { } ''
-    install -Dm644 \
-      "${pkgs.discord}/opt/Discord/modules/discord_desktop_core/app/images/discord.svg" \
-      "$out/share/icons/hicolor/scalable/apps/discord.svg"
   '';
 
   firefoxBin = "${config.programs.firefox.finalPackage}/bin/firefox";
@@ -66,11 +67,184 @@ let
 
   slack-work-links = openLinksInWork "slack-work-links" "${pkgs.slack}/bin/slack";
   obsidian-work-links = openLinksInWork "obsidian-work-links" "${pkgs.obsidian}/bin/obsidian";
+
+  # Nixpkgs can lag Codex's fast release cadence. Pin the official static
+  # Linux binary so terminal Codex updates do not require a system-wide
+  # nixpkgs refresh (which can break independently pinned desktop modules).
+  codex-cli =
+    let
+      version = "0.153.2";
+      codeModeHostSrc = pkgs.fetchurl {
+        url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-code-mode-host-x86_64-unknown-linux-musl.zst";
+        hash = "sha256-oOsgBcBsIkLerxQcS8O0PdIj9jCBvAWKb8Pag1OQLRA=";
+      };
+    in
+    pkgs.stdenvNoCC.mkDerivation {
+      pname = "codex";
+      inherit version;
+
+      src = pkgs.fetchurl {
+        url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-x86_64-unknown-linux-musl.tar.gz";
+        hash = "sha256-6M0RYAcfcl0qEMq4EHPdaBj8iwljchJdJ+9uZv3wl54=";
+      };
+
+      dontUnpack = true;
+      nativeBuildInputs = [
+        pkgs.makeWrapper
+        pkgs.zstd
+      ];
+
+      installPhase = ''
+        runHook preInstall
+        mkdir -p "$out/bin" "$out/libexec"
+        tar -xzf "$src"
+        zstd -d "${codeModeHostSrc}" -o "$out/libexec/codex-code-mode-host"
+        chmod 755 "$out/libexec/codex-code-mode-host"
+        install -m755 codex-x86_64-unknown-linux-musl "$out/libexec/codex"
+        makeWrapper "$out/libexec/codex" "$out/bin/codex" \
+          --prefix PATH : ${
+            lib.makeBinPath [
+              pkgs.ripgrep
+              pkgs.bubblewrap
+            ]
+          }
+        runHook postInstall
+      '';
+
+      meta = {
+        description = "OpenAI's terminal coding agent";
+        homepage = "https://github.com/openai/codex";
+        license = lib.licenses.asl20;
+        mainProgram = "codex";
+        platforms = [ "x86_64-linux" ];
+      };
+    };
+
+  # Nixpkgs packages only Seanime's standalone server. Denshi is the official
+  # desktop client: it embeds that server and adds the integrated libmpv player.
+  seanime-denshi =
+    let
+      pname = "seanime-denshi";
+      version = "3.10.2";
+      src = pkgs.fetchurl {
+        url = "https://github.com/5rahim/seanime/releases/download/v${version}/seanime-denshi-${version}_Linux_x86_64.AppImage";
+        hash = "sha256-Appt2gh4mYyz1YMY4uvNmpXGkKVqxDimABNKMhTbZMA=";
+      };
+      appimageContents = pkgs.appimageTools.extractType2 { inherit pname version src; };
+    in
+    pkgs.appimageTools.wrapType2 {
+      inherit pname version src;
+
+      extraInstallCommands = ''
+        install -Dm644 \
+          "${appimageContents}/seanime-denshi.desktop" \
+          "$out/share/applications/seanime-denshi.desktop"
+        install -Dm644 \
+          "${appimageContents}/usr/share/icons/hicolor/439x439/apps/seanime-denshi.png" \
+          "$out/share/icons/hicolor/439x439/apps/seanime-denshi.png"
+        substituteInPlace "$out/share/applications/seanime-denshi.desktop" \
+          --replace-fail "Exec=AppRun" "Exec=seanime-denshi"
+      '';
+
+      meta = {
+        description = "Electron-based desktop client for Seanime";
+        homepage = "https://seanime.app";
+        license = lib.licenses.gpl3Only;
+        mainProgram = "seanime-denshi";
+        platforms = [ "x86_64-linux" ];
+      };
+    };
+
+  mcvcliCargo = builtins.fromTOML (builtins.readFile "${inputs.mcvcli}/Cargo.toml");
+  mcvcli = pkgs.rustPlatform.buildRustPackage {
+    pname = "mcvcli";
+    version = mcvcliCargo.package.version;
+    src = inputs.mcvcli;
+    cargoLock.lockFile = "${inputs.mcvcli}/Cargo.lock";
+
+    meta = {
+      description = "Command-line interface for managing Minecraft servers";
+      homepage = "https://github.com/mcjars/mcvcli";
+      license = lib.licenses.mit;
+      mainProgram = "mcvcli";
+      platforms = lib.platforms.unix;
+    };
+  };
+
+  # The upstream Nix package runs the whole launcher in steam-run, but that
+  # environment does not include WebKitGTK. Xodus needs libwebkit2gtk-4.1 for
+  # the separate Microsoft Store ownership sign-in, and its downloaded Debian
+  # fallback is not loadable on NixOS. Extend the FHS environment with the
+  # native Nixpkgs library and point the upstream wrapper at it.
+  bedrock-steam-run = (pkgs.steam.override {
+    extraPkgs = fhsPkgs: [
+      fhsPkgs.glib-networking
+      fhsPkgs.webkitgtk_4_1
+    ];
+    # steam-run normally clears GIO_EXTRA_MODULES. WebKitGTK then loads but
+    # libsoup cannot find GLib's TLS backend and the Microsoft page reports
+    # "TLS support is not available".
+    extraProfile = ''
+      umask 077
+      export GIO_EXTRA_MODULES=${pkgs.glib-networking}/lib/gio/modules
+      export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
+    '';
+  }).run;
+  bedrock-on-linux =
+    inputs.bedrock-on-linux.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs
+      (old: {
+        # Upstream's v2.2.1 tag still labels the derivation 2.1.3; the bundled
+        # application code itself correctly reports 2.2.1.
+        version = "2.2.1";
+        __intentionallyOverridingVersion = true;
+        postFixup = (old.postFixup or "") + ''
+          substituteInPlace "$out/bin/bedrock-on-linux" \
+            --replace-fail \
+              "${pkgs.steam-run}/bin/steam-run" \
+              "${bedrock-steam-run}/bin/steam-run"
+        '';
+      });
+
+  # Paseo 0.3.1's runtime tracer looks for node-pty at the repository root,
+  # but npm installs this version under the server workspace. The native addon
+  # is built correctly and then omitted from the desktop output, causing the
+  # daemon to crash as soon as terminal support loads. Preserve the upstream
+  # package and copy only the missing native runtime directory into its traced
+  # node-pty package. Its unpackaged Nix launcher can also miss Electron's
+  # ready-to-show event after a GPU-process fallback, leaving a healthy window
+  # permanently hidden, so explicitly show it once the bundled UI has loaded.
+  # Remove these workarounds once fixed upstream.
+  paseo-desktop = inputs.paseo.packages.${pkgs.stdenv.hostPlatform.system}.desktop.overrideAttrs (_: {
+    postInstall = ''
+      sourceNodePty=packages/server/node_modules/node-pty
+      runtimeNodePty=$out/share/paseo-desktop/packages/server/node_modules/node-pty
+
+      for nativeDir in build prebuilds; do
+        if [ -d "$sourceNodePty/$nativeDir" ]; then
+          cp -a "$sourceNodePty/$nativeDir" "$runtimeNodePty/"
+        fi
+      done
+
+      if ! find "$runtimeNodePty" -name pty.node -print -quit | grep -q .; then
+        echo "Paseo's node-pty native module was not built" >&2
+        exit 1
+      fi
+
+      desktopMain=$out/share/paseo-desktop/packages/desktop/dist/main.js
+      sed -i '/await mainWindow\.loadURL(initialUrl);/a\        mainWindow.show();' "$desktopMain"
+      if [ "$(grep -Fc 'mainWindow.show();' "$desktopMain")" -lt 2 ]; then
+        echo "Paseo's post-load window fallback was not installed" >&2
+        exit 1
+      fi
+    '';
+  });
 in
 {
   imports = [
     inputs.illogical-flake.homeManagerModules.default
+    inputs.codex-desktop-linux.homeManagerModules.default
     inputs.spicetify-nix.homeManagerModules.spicetify
+    ./easyeffects-rnnoise.nix
     ./spotify-ducking.nix
   ];
 
@@ -78,6 +252,39 @@ in
   home.homeDirectory = "/home/zephrynis";
   # Matches the release era of system.stateVersion; never change afterwards.
   home.stateVersion = "26.05";
+
+  programs.codexDesktopLinux.enable = true;
+
+  # Codex keeps config.toml mutable so its CLI can persist project trust and
+  # MCP settings. Enforce Auto-review on every switch without replacing the
+  # rest of that stateful config with a read-only Home Manager symlink.
+  home.activation.codexAutoReview = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    codexConfig="$HOME/.codex/config.toml"
+    mkdir -p "$(dirname "$codexConfig")"
+    touch "$codexConfig"
+
+    if ${pkgs.gnused}/bin/sed -n '1,/^\[/p' "$codexConfig" \
+      | grep -q '^approval_policy[[:space:]]*='; then
+      ${pkgs.gnused}/bin/sed -i \
+        '0,/^approval_policy[[:space:]]*=.*/s//approval_policy = "on-request"/' \
+        "$codexConfig"
+    else
+      ${pkgs.gnused}/bin/sed -i \
+        '1i approval_policy = "on-request"' \
+        "$codexConfig"
+    fi
+
+    if ${pkgs.gnused}/bin/sed -n '1,/^\[/p' "$codexConfig" \
+      | grep -q '^approvals_reviewer[[:space:]]*='; then
+      ${pkgs.gnused}/bin/sed -i \
+        '0,/^approvals_reviewer[[:space:]]*=.*/s//approvals_reviewer = "auto_review"/' \
+        "$codexConfig"
+    else
+      ${pkgs.gnused}/bin/sed -i \
+        '1i approvals_reviewer = "auto_review"' \
+        "$codexConfig"
+    fi
+  '';
 
   programs.illogical-impulse = {
     enable = true;
@@ -119,23 +326,25 @@ in
     fi
   '';
 
-  # Monitor layout (captured from nwg-displays output, 2026-07-18): AOC
-  # CQ27G2S at 165Hz on the left, 4K TV at 1.5x scale to its right.
+  # Monitor layout (updated 2026-08-08): AOC CQ27G2S at 165Hz above,
+  # with the Samsung Odyssey G9 OLED (G95SC) centered below it at
+  # native 5120x1440@240.
   # Overrides the mode=preferred/position=auto catch-all in hyprland/general.lua.
   home.activation.hyprlandMonitorLayout = lib.hm.dag.entryAfter [ "hyprlandNoUpdateNews" ] ''
     hyprCustomGeneral="$HOME/.config/hypr/custom/general.lua"
     if [ -f "$hyprCustomGeneral" ] && ! grep -q 'hl.monitor' "$hyprCustomGeneral"; then
       cat >> "$hyprCustomGeneral" << 'EOF'
 
-    -- Monitor layout (appended by nix-flake, from nwg-displays 2026-07-18)
-    hl.monitor({ output = "DP-2", mode = "2560x1440@165.0", position = "0x0", scale = "1" })
-    hl.monitor({ output = "DP-1", mode = "3840x2160@59.98", position = "2560x678", scale = "1.5" })
+    -- Monitor layout (appended by nix-flake, updated 2026-08-08)
+    hl.monitor({ output = "DP-2", mode = "2560x1440@165.0", position = "1280x0", scale = "1" })
+    hl.monitor({ output = "DP-1", mode = "5120x1440@240.0", position = "0x1440", scale = "1" })
 
-    -- Workspace 1 stays on the 4K TV; cursor starts on the 165Hz AOC
-    hl.workspace_rule({ workspace = "1", monitor = "DP-1", default = true })
+    -- Workspace 1 starts on the AOC, workspace 2 on the G9; cursor starts on the G9
+    hl.workspace_rule({ workspace = "1", monitor = "DP-2", default = true })
+    hl.workspace_rule({ workspace = "2", monitor = "DP-1", default = true })
     hl.on("hyprland.start", function ()
-        hl.dispatch(hl.dsp.focus({ monitor = "DP-2" }))
-        hl.dispatch(hl.dsp.cursor.move({ x = 1280, y = 720 }))
+        hl.dispatch(hl.dsp.focus({ monitor = "DP-1" }))
+        hl.dispatch(hl.dsp.cursor.move({ x = 2560, y = 2160 }))
     end)
     EOF
       echo "Appended monitor layout to hypr/custom/general.lua"
@@ -181,6 +390,58 @@ in
   # Same override for non-Hyprland entry points (illogical-flake's environment.nix
   # sets this to qt6ct)
   home.sessionVariables.QT_QPA_PLATFORMTHEME = lib.mkForce "kde";
+
+  # Minecraft otherwise prefers X11 even when its GLFW supports both backends.
+  # At the mouse receiver's 8 kHz report rate, GLFW's XWayland cursor warping
+  # can produce a huge view delta during fast flicks.  Minecraft 26.x bundles
+  # a matching GLFW snapshot with Wayland and its custom window/input API, so
+  # use that instead of nixpkgs' older system GLFW and opt into native Wayland.
+  # Keep the launcher-owned config writable and preserve other JVM arguments.
+  home.activation.minecraftNativeWayland = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    prismConfig="$HOME/.local/share/PrismLauncher/prismlauncher.cfg"
+    minecraftInstance="$HOME/.local/share/PrismLauncher/instances/Fabulously Optimized/instance.cfg"
+    if [ -f "$prismConfig" ]; then
+      if grep -q '^UseNativeGLFW=' "$prismConfig"; then
+        ${pkgs.gnused}/bin/sed -i 's/^UseNativeGLFW=.*/UseNativeGLFW=false/' "$prismConfig"
+      else
+        printf '\nUseNativeGLFW=false\n' >> "$prismConfig"
+      fi
+
+      if ! grep -q '^JvmArgs=.*MC_DEBUG_PREFER_WAYLAND' "$prismConfig"; then
+        if grep -q '^JvmArgs=$' "$prismConfig"; then
+          ${pkgs.gnused}/bin/sed -i \
+            's|^JvmArgs=$|JvmArgs=-DMC_DEBUG_ENABLED=true -DMC_DEBUG_PREFER_WAYLAND=true|' \
+            "$prismConfig"
+        elif grep -q '^JvmArgs=' "$prismConfig"; then
+          ${pkgs.gnused}/bin/sed -i \
+            's|^JvmArgs=|JvmArgs=-DMC_DEBUG_ENABLED=true -DMC_DEBUG_PREFER_WAYLAND=true |' \
+            "$prismConfig"
+        else
+          printf 'JvmArgs=-DMC_DEBUG_ENABLED=true -DMC_DEBUG_PREFER_WAYLAND=true\n' >> "$prismConfig"
+        fi
+      fi
+    fi
+
+    # Pin this instance as well, so Prism's nixpkgs-native workaround cannot
+    # silently re-enable the older system GLFW over the global setting.
+    if [ -f "$minecraftInstance" ]; then
+      if grep -q '^OverrideNativeWorkarounds=' "$minecraftInstance"; then
+        ${pkgs.gnused}/bin/sed -i \
+          's/^OverrideNativeWorkarounds=.*/OverrideNativeWorkarounds=true/' \
+          "$minecraftInstance"
+      else
+        printf 'OverrideNativeWorkarounds=true\n' >> "$minecraftInstance"
+      fi
+
+      if grep -q '^UseNativeGLFW=' "$minecraftInstance"; then
+        ${pkgs.gnused}/bin/sed -i \
+          's/^UseNativeGLFW=.*/UseNativeGLFW=false/' \
+          "$minecraftInstance"
+      else
+        printf 'UseNativeGLFW=false\n' >> "$minecraftInstance"
+      fi
+    fi
+  '';
 
   # Super+W opens Firefox instead of Chrome. The dots' hyprland/keybinds.lua
   # binds it to $browser, which launch_first_available.sh resolves to the first
@@ -263,6 +524,11 @@ EOF
     # Written by nix-flake (recreated every switch; the dots wipe this dir)
     screencopy {
       custom_picker_binary = ${share-picker-themed}
+      # Reuse the first picker selection via a restore token so the portal
+      # dialog isn't reopened for the stream itself. Without this, Chromium/
+      # Electron (Vesktop) reopens the picker for the real stream after the
+      # preview — the "picker appears 2-3 times" bug. See Vesktop#583.
+      allow_token_by_default = true
     }
     EOF
   '';
@@ -405,6 +671,12 @@ EOF
     enable = true;
     userName = "zephrynis";
     userEmail = "zephrynis.yt@gmail.com";
+    # What `gh auth setup-git` would write, but can't — the HM-managed git
+    # config lives read-only in the store.
+    extraConfig = {
+      credential."https://github.com".helper = "!gh auth git-credential";
+      credential."https://gist.github.com".helper = "!gh auth git-credential";
+    };
   };
 
   # The dots run `hyprctl setcursor Bibata-Modern-Classic 24` but don't install
@@ -417,7 +689,6 @@ EOF
     x11.enable = true;
   };
 
-
   # Two profiles: personal (default, purple) and work (blue). Firefox has no
   # native per-profile accent, so each profile tints its toolbars via
   # userChrome.css. Launch work with `firefox -P work` (desktop entry below).
@@ -429,8 +700,8 @@ EOF
           # Same wiring as the upstream flake's overlay, but against the system
           # pkgs so nixpkgs.config (allowUnfree, for 1Password) applies
           buildMozillaXpiAddon =
-            (import "${inputs.firefox-addons}/lib/mozilla.nix" { inherit lib; })
-              .mkBuildMozillaXpiAddon { inherit (pkgs) fetchurl stdenv; };
+            (import "${inputs.firefox-addons}/lib/mozilla.nix" { inherit lib; }).mkBuildMozillaXpiAddon
+              { inherit (pkgs) fetchurl stdenv; };
         };
         settings = {
           # Load userChrome.css
@@ -450,13 +721,20 @@ EOF
           id = 0;
           isDefault = true;
           inherit settings;
-          extensions.packages = [ addons.ublock-origin addons.proton-pass ];
+          extensions.packages = [
+            addons.ublock-origin
+            addons.proton-pass
+            addons.onepassword-password-manager
+          ];
           userChrome = accent "#45256e";
         };
         work = {
           id = 1;
           inherit settings;
-          extensions.packages = [ addons.ublock-origin addons.onepassword-password-manager ];
+          extensions.packages = [
+            addons.ublock-origin
+            addons.onepassword-password-manager
+          ];
           userChrome = accent "#1e3a6e";
         };
       };
@@ -469,7 +747,10 @@ EOF
     exec = "firefox -P work --name firefox-work %U";
     icon = "firefox";
     terminal = false;
-    categories = [ "Network" "WebBrowser" ];
+    categories = [
+      "Network"
+      "WebBrowser"
+    ];
   };
 
   programs.direnv = {
@@ -497,16 +778,21 @@ EOF
   # xdg-open and apps use this for directories. The claude-cli handler was
   # registered imperatively by claude-code — kept here since HM now owns
   # mimeapps.list.
-  # Relabel Vesktop's launcher entry to "Discord" with the real Discord logo.
+  # Keep an explicit Vesktop launcher entry so it remains distinct from the
+  # regular Discord client in the app list.
   # HM writes ~/.local/share/applications/vesktop.desktop, which shadows the
   # package's own copy (user data dir wins in XDG_DATA_DIRS). Exec stays
   # `vesktop`; StartupWMClass stays Vesktop so window matching still works.
   xdg.desktopEntries.vesktop = {
-    name = "Discord";
+    name = "Vesktop";
     genericName = "Internet Messenger";
     exec = "vesktop %U";
-    icon = "discord";
-    categories = [ "Network" "InstantMessaging" "Chat" ];
+    icon = "vesktop";
+    categories = [
+      "Network"
+      "InstantMessaging"
+      "Chat"
+    ];
     mimeType = [ "x-scheme-handler/discord" ];
     type = "Application";
     settings = {
@@ -527,7 +813,12 @@ EOF
     icon = "slack";
     type = "Application";
     startupNotify = true;
-    categories = [ "GNOME" "GTK" "Network" "InstantMessaging" ];
+    categories = [
+      "GNOME"
+      "GTK"
+      "Network"
+      "InstantMessaging"
+    ];
     mimeType = [ "x-scheme-handler/slack" ];
     settings.StartupWMClass = "Slack";
   };
@@ -570,18 +861,44 @@ EOF
     # sane WebRTC bitrate (the official `discord` client starved it into
     # macroblocks) and it streams desktop audio, which official Linux Discord
     # can't. Uses the same xdg-desktop-portal-hyprland picker wired up above.
-    # Relabeled to "Discord" with the real Discord logo via the desktop-entry
-    # override + discord-icon below.
     vesktop
-    discord-icon
+    # Official Discord client, alongside Vesktop, to re-test its screenshare.
+    discord
     slack
     # Obsidian: Markdown knowledge base / note-taking (unfree; allowUnfree
     # already enabled for the other proprietary apps above).
     obsidian
+    # Iotas: lightweight Markdown-friendly notes app with optional Nextcloud sync.
+    iotas
+    # OBS Studio: screen recording and streaming.
+    obs-studio
     # Chrome: occasional-use only. Firefox stays the default link handler —
     # the xdg.mimeApps http/https pins above keep Chrome from grabbing links.
     google-chrome
     claude-code
+    # Codex CLI: OpenAI's terminal coding agent
+    codex-cli
+    # Node.js runtime and its bundled npm package manager.
+    nodejs
+    # Paseo desktop client; bundles and starts its local agent daemon.
+    paseo-desktop
+    # Minecraft server version manager, packaged from inputs.mcvcli above.
+    mcvcli
+    # GUI decompiler for browsing and inspecting Minecraft plugin JARs.
+    (bytecode-viewer.overrideAttrs (old: {
+      # BCV uses a SecurityManager for its inspection safeguards. Java 21
+      # requires this opt-in before the application can install it.
+      postFixup = (old.postFixup or "") + ''
+        wrapProgram "$out/bin/bytecode-viewer" \
+          --prefix JDK_JAVA_OPTIONS " " "-Djava.security.manager=allow"
+      '';
+    }))
+    # Minecraft Bedrock for Windows, using the upstream Nix package.
+    bedrock-on-linux
+    # Seanime desktop client with its embedded server and libmpv player.
+    seanime-denshi
+    # Torrent client used by Seanime for managed and automatic downloads.
+    qbittorrent
     ripgrep
     fd
     fzf

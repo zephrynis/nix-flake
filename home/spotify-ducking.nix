@@ -1,8 +1,9 @@
 { pkgs, ... }:
 
 # Voice-activity ducking: while you OR someone else is speaking in a Discord
-# (Vesktop) voice call, Spotify's volume is lowered; it returns to normal a
-# beat after everyone goes quiet. Nothing else on the system is touched.
+# (Vesktop or the regular client) voice call, Spotify's volume is lowered; it
+# returns to normal a beat after everyone goes quiet. Nothing else on the
+# system is touched.
 #
 # The daemon (./spotify-duck.py) meters Discord's own output stream and your
 # denoised mic (rnnoise_source, from modules/noise-suppression.nix) directly via
@@ -40,7 +41,8 @@ in
         "DISC_THRESHOLD=0.008"  # others-speaking RMS gate on Discord's output
         "RELEASE_MS=900"        # restore this long after the last speech
         "MIC_TARGET=rnnoise_source"  # mic node; the denoised source you use in Discord
-        "DISCORD_APP=vesktop"        # application.name of the Discord client
+        # Client names matched against PipeWire app, binary, and node names.
+        "DISCORD_APPS=vesktop,discord"
         "SPOTIFY_MATCH=spotify"      # substring identifying Spotify's stream
       ];
     };

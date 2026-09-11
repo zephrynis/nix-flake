@@ -42,6 +42,28 @@
       flake = false;
     };
 
+    # Minecraft server version manager. Packaged from its Cargo sources in the
+    # home-manager config because it is not currently available in nixpkgs.
+    mcvcli = {
+      url = "github:mcjars/mcvcli";
+      flake = false;
+    };
+
+    # Minecraft Bedrock for Windows running through the upstream Wine/Proton
+    # launcher. Pin a release so system rebuilds remain reproducible.
+    bedrock-on-linux = {
+      url = "github:Wyze3306/BedrockOnLinux/v2.2.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Paseo desktop app: a local UI/daemon for driving coding agents remotely.
+    # Keep its own locked nixpkgs so the upstream npm dependency hash remains
+    # reproducible against the nixpkgs revision it is tested with.
+    paseo.url = "github:getpaseo/paseo";
+
+    # Unofficial Linux desktop distribution of OpenAI's ChatGPT/Codex app.
+    codex-desktop-linux.url = "github:ilysenko/codex-desktop-linux";
+
     # Declarative Spicetify (Spotify client mods). The home-manager module
     # installs its own wrapped Spotify — pkgs.spotify must NOT be added anywhere.
     spicetify-nix = {

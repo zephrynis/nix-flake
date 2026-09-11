@@ -16,18 +16,24 @@
 
   environment.systemPackages = with pkgs; [
     mangohud
+    # The home-manager activation opts Minecraft 26.x and its matching bundled
+    # GLFW snapshot into native Wayland, avoiding XWayland cursor warps at 8 kHz.
     prismlauncher
     protonup-qt
+    # Thunderstore mod manager, used here for ROUNDS mods.
+    r2modman
   ];
 
   # Minecraft Bedrock via mcpelauncher (unofficial; runs the Android ARM build
-  # through a libc shim — you must own Bedrock on Google Play). Installed as a
-  # Flatpak (io.mrarm.mcpelauncher) rather than the nixpkgs package, whose
-  # launcher lagged the newer, pairip-protected Bedrock releases. nix-flatpak
-  # adds the Flathub remote (its default) and installs the app on activation.
+  # through a libc shim — you must own Bedrock on Google Play) and SoulFire's
+  # official Linux desktop app. Both are installed from Flathub; nix-flatpak
+  # adds the remote (its default) and installs the apps on activation.
   services.flatpak = {
     enable = true;
-    packages = [ "io.mrarm.mcpelauncher" ];
+    packages = [
+      "com.soulfiremc.soulfire"
+      "io.mrarm.mcpelauncher"
+    ];
   };
 
   # Some devices expose a control interface that udev misdetects as a joystick,

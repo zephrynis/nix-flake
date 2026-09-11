@@ -4,12 +4,13 @@
 Design (see home/spotify-ducking.nix for the wiring):
 
   * "Someone else is speaking" is measured by tapping the MONITOR of Discord's
-    (Vesktop's) own playback stream via `pw-record --target <serial>`. That
-    captures ONLY Vesktop's output, so Spotify's own audio can never leak into
-    the meter and cause a feedback duck.
+    own playback stream via `pw-record --target <serial>`. That captures ONLY
+    the active Discord client's output, so Spotify's own audio can never leak
+    into the meter and cause a feedback duck.
   * "You are speaking" is measured by tapping your denoised mic (rnnoise_source)
     the same way -- but only counts while you're actually in a voice call, which
-    we detect by Vesktop holding an open capture (Stream/Input/Audio) stream.
+    we detect by a Discord client holding an open capture
+    (Stream/Input/Audio) stream.
     So talking near your mic outside a call won't touch the music.
   * When either crosses its threshold we ride ONLY Spotify's own stream volume
     down to DUCK_LEVEL and back up after RELEASE_MS of silence. Nothing else on
@@ -38,7 +39,17 @@ MIC_TH = float(os.environ.get("MIC_THRESHOLD", "0.02"))  # you-speaking RMS gate
 DISC_TH = float(os.environ.get("DISC_THRESHOLD", "0.012"))  # others-speaking gate
 RELEASE = float(os.environ.get("RELEASE_MS", "700")) / 1000.0  # silence hold
 MIC_TARGET = os.environ.get("MIC_TARGET", "rnnoise_source")    # mic node.name
-DISCORD_APP = os.environ.get("DISCORD_APP", "vesktop")         # application.name
+# Comma-separated, case-insensitive client names. These are matched against
+# PipeWire's application name, process binary, and node name because Electron
+# clients often expose generic stream names such as "WEBRTC VoiceEngine".
+# Keep the old singular variable as a fallback for standalone installations.
+DISCORD_APPS = {
+    name.strip().lower()
+    for name in os.environ.get(
+        "DISCORD_APPS", os.environ.get("DISCORD_APP", "vesktop,discord")
+    ).split(",")
+    if name.strip()
+}
 SPOTIFY_MATCH = os.environ.get("SPOTIFY_MATCH", "spotify").lower()
 POLL = float(os.environ.get("POLL_SEC", "1.0"))          # graph-discovery period
 
@@ -122,6 +133,33 @@ class Meter(threading.Thread):
 G = {"discord_serial": None, "in_call": False, "spotify_id": None}
 
 
+def inspect_graph(dump):
+    """Return the Discord call and Spotify stream state from a PipeWire dump."""
+    dser = spid = None
+    incall = False
+    for o in dump:
+        if o.get("type") != "PipeWire:Interface:Node":
+            continue
+        p = (o.get("info") or {}).get("props") or {}
+        mc = p.get("media.class", "")
+        app_name = (p.get("application.name") or "").lower()
+        binn = (p.get("application.process.binary") or "").lower()
+        nn = (p.get("node.name") or "").lower()
+        is_discord = app_name in DISCORD_APPS or any(
+            client in binn or client in nn for client in DISCORD_APPS
+        )
+        if mc == "Stream/Output/Audio" and is_discord:
+            dser = p.get("object.serial")
+        elif mc == "Stream/Input/Audio" and is_discord:
+            incall = True
+        elif mc == "Stream/Output/Audio" and (
+            SPOTIFY_MATCH in app_name or SPOTIFY_MATCH in binn
+            or SPOTIFY_MATCH in nn
+        ):
+            spid = o["id"]
+    return {"discord_serial": dser, "in_call": incall, "spotify_id": spid}
+
+
 def discover():
     while True:
         try:
@@ -129,26 +167,7 @@ def discover():
         except Exception:
             time.sleep(POLL)
             continue
-        dser = incall = spid = None
-        incall = False
-        for o in dump:
-            if o.get("type") != "PipeWire:Interface:Node":
-                continue
-            p = (o.get("info") or {}).get("props") or {}
-            mc = p.get("media.class", "")
-            app = (p.get("application.name") or "")
-            binn = (p.get("application.process.binary") or "").lower()
-            nn = (p.get("node.name") or "").lower()
-            if mc == "Stream/Output/Audio" and app == DISCORD_APP:
-                dser = p.get("object.serial")
-            elif mc == "Stream/Input/Audio" and app == DISCORD_APP:
-                incall = True
-            elif mc == "Stream/Output/Audio" and (
-                SPOTIFY_MATCH in app.lower() or SPOTIFY_MATCH in binn
-                or SPOTIFY_MATCH in nn
-            ):
-                spid = o["id"]
-        G.update(discord_serial=dser, in_call=incall, spotify_id=spid)
+        G.update(inspect_graph(dump))
         time.sleep(POLL)
 
 

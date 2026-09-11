@@ -14,7 +14,11 @@
     nvidiaSettings = true;
     powerManagement.enable = true; # preserves VRAM across suspend — avoids Wayland resume corruption
     powerManagement.finegrained = false; # desktop GPU
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    # 595.84 repeatedly exhausts NVKMS allocations under Wayland when VRAM is
+    # pressured (especially when a window reallocates at 5120x1440 fullscreen),
+    # freezing presentation while the application itself keeps running. Pin the
+    # previous production branch until NVIDIA fixes the regression.
+    package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
   };
 
   boot.kernelParams = [ "nvidia_drm.fbdev=1" ];

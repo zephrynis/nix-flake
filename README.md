@@ -14,6 +14,36 @@ home/zephrynis.nix  illogical-impulse + git/direnv/vscode/CLI tools
 Rebuild after changes: `sudo nixos-rebuild switch --flake .#nixos-pc`
 Update inputs (one at a time is safer): `nix flake update <input>`
 
+## Inspecting Minecraft plugin JARs
+
+[Bytecode Viewer](https://github.com/Konloch/bytecode-viewer) is included in the
+home packages. After rebuilding, launch **Bytecode-Viewer** from the app launcher
+or run:
+
+```sh
+bytecode-viewer
+```
+
+Open or drag a plugin JAR into the window, expand its package tree, and select a
+class to browse decompiled Java. It includes multiple decompilers, including CFR
+and FernFlower, so try another engine if one produces unreadable output.
+
+Treat suspected plugins as data: do not launch them with `java -jar` or load them
+into a server to inspect them. Use the viewer's static decompilation features.
+For untrusted files, use an offline disposable VM when possible, since analysis
+tools also parse attacker-controlled input.
+
+Start with the main class named in `plugin.yml` (or `paper-plugin.yml`), especially
+`onLoad`, `onEnable`, command handlers, and scheduled tasks. Use the GUI's search
+to look for process execution (`ProcessBuilder`, `getRuntime`), code loading
+(`URLClassLoader`, `defineClass`), network access (`http`, `Socket`), encoded
+strings (`Base64`), and permission changes (`setOp`, `dispatchCommand`).
+
+These are review leads, not malware verdicts: legitimate plugins use many of the
+same APIs. Trace the surrounding code and any decoded strings; inspect bundled
+JARs and resources too. Obfuscation, downloaded payloads, and decompiler errors
+can hide behavior, so an empty search does not establish that a plugin is safe.
+
 ---
 
 ## Install procedure

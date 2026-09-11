@@ -8,6 +8,7 @@
     ../../modules/nvidia.nix
     ../../modules/gaming.nix
     ../../modules/tailscale.nix
+    ../../modules/virtualisation.nix
     ../../modules/noise-suppression.nix
   ];
 

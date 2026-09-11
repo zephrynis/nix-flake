@@ -1,9 +1,33 @@
 { inputs, pkgs, ... }:
 
+let
+  # Hyprland 0.56.0 emits malformed JSON for `hyprctl binds -j`, leaving the
+  # illogical-impulse Super+/ cheatsheet empty. 0.56.1 fixed the serializer;
+  # use the latest patch release without advancing the entire nixpkgs pin.
+  # Remove this override once the pinned nixpkgs already ships >= 0.56.1.
+  hyprlandFixed = pkgs.hyprland.overrideAttrs (oldAttrs: {
+    version = "0.56.2";
+    src = pkgs.fetchFromGitHub {
+      owner = "hyprwm";
+      repo = "hyprland";
+      fetchSubmodules = true;
+      tag = "v0.56.2";
+      hash = "sha256-jOcfiv+Zs2iz5oTIQcJXZ0+5MfqW0oLgGxD0cKdmXpE=";
+    };
+    env = oldAttrs.env // {
+      GIT_BRANCH = "v0.56.2-b";
+      GIT_COMMIT_DATE = "2026-08-05";
+      GIT_COMMIT_HASH = "efb50993780079460b0cbed1363e2166a2de1d9f";
+      GIT_COMMIT_MESSAGE = "[gha] Nix: update inputs";
+      GIT_TAG = "v0.56.2";
+    };
+  });
+in
 {
   # System-side requirements of illogical-flake (the HM module does the rest)
   programs.hyprland = {
     enable = true;
+    package = hyprlandFixed;
     withUWSM = false; # UWSM session black-screens (NVIDIA env vars + non-UWSM-aware dots)
   };
   services.geoclue2.enable = true; # QtPositioning — weather / night light widgets
